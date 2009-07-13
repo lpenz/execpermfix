@@ -1,0 +1,23 @@
+execpermfix
+===========
+
+By Leandro Penz
+
+__ftpsync__ is a program that fixes executable permissions in unix systems.
+
+It detects which files are executable by checking their names and contents, and
+gives the executable permission to everyone that has read permissions.
+
+
+Instalation
+-----------
+
+Download it, get into the source directory and type `make`. Copy the generated
+*execpermfix* to any directory in `PATH`.
+
+
+Usage
+-----
+
+Execute `execpermfix <path>` to fix all files in `<path>` recursively.
+

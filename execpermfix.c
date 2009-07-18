@@ -37,6 +37,30 @@ static int doEntity(int verbose, const char *name);
 /****************************************************************************/
 
 /**
+ * \brief  Calculates target permissions.
+ * \param  current Current permissions.
+ * \param  x 1 to turn on executable permissions, 0 to turn off.
+ * \return Target permissions.
+ */
+static mode_t targetPermission(mode_t current, int x)
+{
+	mode_t rv = current & ~S_IX;
+
+	if (x) {
+		if(current & S_IRUSR)
+			rv |= S_IXUSR;
+		if(current & S_IRGRP)
+			rv |= S_IXGRP;
+		if(current & S_IROTH)
+			rv |= S_IXOTH;
+	}
+
+	return rv;
+}
+
+/****************************************************************************/
+
+/**
  * \brief  Processes a directory recursively.
  * \param  verbose 1 to print actions.
  * \param  name Path of entity to process.
@@ -56,6 +80,7 @@ static int doDir(int verbose, const char *name, int fd, const struct stat *st)
 	while (readdir_r(dir, &entry, &result) == 0 && result) {
 		char *namesub;
 		int namesubSize;
+		mode_t target = targetPermission(st->st_mode, 1);
 
 		if (strcmp(entry.d_name, ".") == 0
 				|| strcmp(entry.d_name, "..") == 0)
@@ -67,19 +92,19 @@ static int doDir(int verbose, const char *name, int fd, const struct stat *st)
 		rv |= doEntity(verbose, namesub);
 		free(namesub);
 
-		if ((st->st_mode & S_IX) == S_IX)
+		if (st->st_mode == target)
 			continue;
 
 		if (!DEBUG) {
-			if (chmod(name, st->st_mode | S_IX) < 0) {
+			if (chmod(name, target) < 0) {
 				fprintf(stderr, "Error in chmod of %s: %s\n", name, strerror(errno));
 				rv |= 1;
 			}
 			else if (verbose)
-				printf("%-4s %-80s | %8o -> %o\n", "dir", name, st->st_mode, st->st_mode | S_IX);
+				printf("%-4s %-80s | %8o -> %o\n", "dir", name, st->st_mode, target);
 		}
 		else if (verbose)
-			printf("%-4s %-80s | %8o would change to 0%o\n", "dir", name, st->st_mode, st->st_mode | S_IX);
+			printf("%-4s %-80s | %8o would change to 0%o\n", "dir", name, st->st_mode, target);
 	}
 
 	closedir(dir);
@@ -243,27 +268,24 @@ static int doFile(int verbose, const char *name, int fd, const struct stat *st)
 {
 	int rv = 0;
 	int x = 0;
-	int wanted;
+	mode_t target;
 
 	if ((x = fileIsExec(name, fd, st)) < 0)
 		return 1;
 
-	if (x)
-		wanted = st->st_mode | S_IX;
-	else
-		wanted = st->st_mode & ~S_IX;
+	target = targetPermission(st->st_mode, x);
 
-	if (!DEBUG && st->st_mode != wanted) {
-		if (chmod(name, wanted) < 0) {
+	if (!DEBUG && st->st_mode != target) {
+		if (chmod(name, target) < 0) {
 			fprintf(stderr, "Error in chmod of %s: %s\n", name, strerror(errno));
 			rv |= 1;
 		}
 		else if (verbose)
-			printf("%-4s %-80s | %8o -> %o\n", "file", name, st->st_mode, wanted);
+			printf("%-4s %-80s | %8o -> %o\n", "file", name, st->st_mode, target);
 	}
 
-	if (DEBUG && x != ((st->st_mode & S_IX) == S_IX) && verbose)
-		printf("%-4s %-80s | %8o would change to 0%o\n", "file", name, st->st_mode, wanted);
+	if (DEBUG && st->st_mode != target && verbose)
+		printf("%-4s %-80s | %8o would change to 0%o\n", "file", name, st->st_mode, target);
 
 	return 0;
 }

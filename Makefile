@@ -1,4 +1,7 @@
 
+CFLAGS=-Wall -Werror
+
+
 all: execpermfix
 
 execpermfix: execpermfix.o

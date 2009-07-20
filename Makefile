@@ -1,8 +1,10 @@
 
 all: execpermfix
 
-execpermfix: execpermfix.c
+execpermfix: execpermfix.o
+
+execpermfix.o: execpermfix.c
 
 clean:
-	rm -f execpermfix
+	rm -f execpermfix.o execpermfix
 

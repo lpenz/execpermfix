@@ -1,0 +1,16 @@
+Source: execpermfix
+Section: utils
+Priority: extra
+Maintainer: Leandro Lisboa Penz <lpenz@terra.com.br>
+Build-Depends: debhelper (>= 7), make (>= 3.81-5), libc6-dev (>= 2.7-18), gcc (>= 4:4.3.2-2), coreutils (>= 6.10-6)
+Standards-Version: 3.8.1
+Homepage: http://github.com/lpenz/execpermfix
+
+Package: execpermfix
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Fixes executable permissions
+ execpermfix sets or resets the executable permission of a file based on its
+ name and contents. When setting the permission, only users that can read the
+ file will be able to execute it.
+

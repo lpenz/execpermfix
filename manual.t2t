@@ -1,0 +1,43 @@
+execpermfix
+
+
+
+= NAME =
+
+execpermfix - fixes executable permissions
+
+
+
+= SYNOPSIS =
+
+**execpermfix** [-v] <files>
+
+
+
+= DESCRIPTION =
+
+**execpermfix** is a program that fixes executable permissions.
+
+It detects which files are executable by checking their names and contents, and
+gives the executable permission to everyone that has read permissions.
+
+
+
+= OPTIONS =
+
+**-v** Verbose mode.
+
+
+
+= AUTHOR =
+
+Written by Leandro Penz
+
+
+
+= SEE ALSO =
+
+**chmod**(1)
+
+
+

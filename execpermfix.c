@@ -26,6 +26,15 @@
 
 /****************************************************************************/
 
+const char USAGE[] =
+"Usage: execpermfix [-v] [-h] <paths...>\n"
+"Fixes executable permission of files based on the file type and on the\n"
+"current read permissions.\n\n"
+"    -h    This help.\n"
+"    -v    Verbose mode.\n";
+
+/****************************************************************************/
+
 /**
  * \brief  Processes a file or a directory recursively.
  * \param  verbose 1 to print actions.
@@ -336,11 +345,14 @@ int main(int argc, char *argv[])
 	int rv = 0;
 	int i;
 	int opt;
-	const char options[] = "v";
+	const char options[] = "hv";
 	int verbose = 0;
 
 	while ((opt = getopt(argc, argv, options)) != -1) {
 		switch (opt) {
+			case 'h':
+				printf("%s", USAGE);
+				return 0;
 			case 'v':
 				verbose = 1;
 				break;

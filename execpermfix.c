@@ -357,10 +357,10 @@ int main(int argc, char *argv[])
 				verbose = 1;
 				break;
 			case '?':
-				printf("Unknown option/command.\n");
+				fprintf(stderr, "Unknown option/command.\n%s", USAGE);
 				return 1;
 			default:
-				printf("Error: option/command not found!\n");
+				fprintf(stderr, "Error: option/command not found!\n%s", USAGE);
 				return 1;
 		}
 	}

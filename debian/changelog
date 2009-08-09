@@ -1,3 +1,13 @@
+execpermfix (1.0.1) unstable; urgency=low
+
+  * Usage information.
+  * -h command-line option.
+  * -n command-line option for dry-run.
+  * file descriptor leak fixed.
+  * Error messages improved
+
+ -- Leandro Lisboa Penz <lpenz@terra.com.br>  Sun, 9 Aug 2009 17:56:47 -0300
+
 execpermfix (1.0) unstable; urgency=low
 
   * Initial Release.

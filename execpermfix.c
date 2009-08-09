@@ -70,6 +70,43 @@ static mode_t targetPermission(mode_t current, int x)
 /****************************************************************************/
 
 /**
+ * \brief  Does the chmod call for files and dirs.
+ * \param  verbose 1 to print actions.
+ * \param  name Path of entity to process.
+ * \param  isdir 1 if it's a directory, 0 if it's a file.
+ * \param  orig Original permissions.
+ * \param  target Target permissions.
+ * \return 0 if ok, 1 if error.
+ */
+static int doChmod(int verbose, const char *name, int isdir, mode_t orig, mode_t target)
+{
+	const char *df[] = { "file", "dir" };
+	const char *type;
+
+	if(isdir < 0 || isdir > 1) {
+		fprintf(stderr, "Fatal error in isdir");
+		abort();
+	}
+
+	type = df[isdir];
+
+	if (!DEBUG) {
+		if (chmod(name, target) < 0) {
+			fprintf(stderr, "%s: (%s) chmod error %s\n", name, type, strerror(errno));
+			return 1;
+		}
+		else if (verbose)
+			printf("%s: (%s) %8o changed to %o\n", name, type, orig, target);
+	}
+	else if (verbose)
+		printf("%s: (%s) %8o would change to %o\n", name, type, orig, target);
+
+	return 0;
+}
+
+/****************************************************************************/
+
+/**
  * \brief  Processes a directory recursively.
  * \param  verbose 1 to print actions.
  * \param  name Path of entity to process.
@@ -104,16 +141,7 @@ static int doDir(int verbose, const char *name, int fd, const struct stat *st)
 		if (st->st_mode == target)
 			continue;
 
-		if (!DEBUG) {
-			if (chmod(name, target) < 0) {
-				fprintf(stderr, "Error in chmod of %s: %s\n", name, strerror(errno));
-				rv |= 1;
-			}
-			else if (verbose)
-				printf("%-4s %-80s | %8o -> %o\n", "dir", name, st->st_mode, target);
-		}
-		else if (verbose)
-			printf("%-4s %-80s | %8o would change to 0%o\n", "dir", name, st->st_mode, target);
+		rv |= doChmod(verbose, name, 1, st->st_mode, target);
 	}
 
 	closedir(dir);
@@ -275,7 +303,6 @@ static int fileIsExec(const char *name, int fd, const struct stat *st)
  */
 static int doFile(int verbose, const char *name, int fd, const struct stat *st)
 {
-	int rv = 0;
 	int x = 0;
 	mode_t target;
 
@@ -284,19 +311,7 @@ static int doFile(int verbose, const char *name, int fd, const struct stat *st)
 
 	target = targetPermission(st->st_mode, x);
 
-	if (!DEBUG && st->st_mode != target) {
-		if (chmod(name, target) < 0) {
-			fprintf(stderr, "Error in chmod of %s: %s\n", name, strerror(errno));
-			rv |= 1;
-		}
-		else if (verbose)
-			printf("%-4s %-80s | %8o -> %o\n", "file", name, st->st_mode, target);
-	}
-
-	if (DEBUG && st->st_mode != target && verbose)
-		printf("%-4s %-80s | %8o would change to 0%o\n", "file", name, st->st_mode, target);
-
-	return 0;
+	return doChmod(verbose, name, 0, st->st_mode, target);
 }
 
 /****************************************************************************/

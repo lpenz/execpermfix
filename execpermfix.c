@@ -19,8 +19,6 @@
 #include <dirent.h>
 #include <getopt.h>
 
-#define DEBUG 0
-
 #define S_IX (S_IXUSR | S_IXGRP | S_IXOTH)
 #define S_DEF (0644)
 
@@ -31,17 +29,19 @@ const char USAGE[] =
 "Fixes executable permission of files based on the file type and on the\n"
 "current read permissions.\n\n"
 "    -h    This help.\n"
-"    -v    Verbose mode.\n";
+"    -v    Verbose mode.\n"
+"    -n    Performs a trial run, no changes are made.\n";
 
 /****************************************************************************/
 
 /**
  * \brief  Processes a file or a directory recursively.
  * \param  verbose 1 to print actions.
+ * \param  noop Do not perform any change.
  * \param  name Path of entity to process.
  * \return 0 if ok, 1 if error.
  */
-static int doEntity(int verbose, const char *name);
+static int doEntity(int verbose, int noop, const char *name);
 
 /****************************************************************************/
 
@@ -72,16 +72,20 @@ static mode_t targetPermission(mode_t current, int x)
 /**
  * \brief  Does the chmod call for files and dirs.
  * \param  verbose 1 to print actions.
+ * \param  noop Do not perform any change.
  * \param  name Path of entity to process.
  * \param  isdir 1 if it's a directory, 0 if it's a file.
  * \param  orig Original permissions.
  * \param  target Target permissions.
  * \return 0 if ok, 1 if error.
  */
-static int doChmod(int verbose, const char *name, int isdir, mode_t orig, mode_t target)
+static int doChmod(int verbose, int noop, const char *name, int isdir, mode_t orig, mode_t target)
 {
 	const char *df[] = { "file", "dir" };
 	const char *type;
+
+	if(orig == target)
+		return 0;
 
 	if(isdir < 0 || isdir > 1) {
 		fprintf(stderr, "Fatal error in isdir");
@@ -90,16 +94,19 @@ static int doChmod(int verbose, const char *name, int isdir, mode_t orig, mode_t
 
 	type = df[isdir];
 
-	if (!DEBUG) {
-		if (chmod(name, target) < 0) {
-			fprintf(stderr, "%s: (%s) chmod error %s\n", name, type, strerror(errno));
-			return 1;
-		}
-		else if (verbose)
-			printf("%s: (%s) %8o changed to %o\n", name, type, orig, target);
+	if(noop) {
+		if(verbose)
+			printf("%s: %s %o would change to %o\n", name, type, orig, target);
+		return 0;
 	}
-	else if (verbose)
-		printf("%s: (%s) %8o would change to %o\n", name, type, orig, target);
+
+	if (chmod(name, target) < 0) {
+		fprintf(stderr, "%s: %s chmod error %s\n", name, type, strerror(errno));
+		return 1;
+	}
+
+	if(verbose)
+		printf("%s: %s %o changed to %o\n", name, type, orig, target);
 
 	return 0;
 }
@@ -109,12 +116,13 @@ static int doChmod(int verbose, const char *name, int isdir, mode_t orig, mode_t
 /**
  * \brief  Processes a directory recursively.
  * \param  verbose 1 to print actions.
+ * \param  noop Do not perform any change.
  * \param  name Path of entity to process.
  * \param  fd File descriptor of entity (result of open).
  * \param  st Stat structure of entity (result of stat).
  * \return 0 if ok, 1 if error.
  */
-static int doDir(int verbose, const char *name, int fd, const struct stat *st)
+static int doDir(int verbose, int noop, const char *name, int fd, const struct stat *st)
 {
 	DIR *dir;
 	struct dirent entry;
@@ -135,13 +143,10 @@ static int doDir(int verbose, const char *name, int fd, const struct stat *st)
 		namesubSize = strlen(name) + strlen(entry.d_name) + 2;
 		namesub = malloc(namesubSize);
 		snprintf(namesub, namesubSize, "%s/%s", name, entry.d_name);
-		rv |= doEntity(verbose, namesub);
+		rv |= doEntity(verbose, noop, namesub);
 		free(namesub);
 
-		if (st->st_mode == target)
-			continue;
-
-		rv |= doChmod(verbose, name, 1, st->st_mode, target);
+		rv |= doChmod(verbose, noop, name, 1, st->st_mode, target);
 	}
 
 	closedir(dir);
@@ -296,12 +301,13 @@ static int fileIsExec(const char *name, int fd, const struct stat *st)
 /**
  * \brief  Processes a file.
  * \param  verbose 1 to print actions.
+ * \param  noop Do not perform any change.
  * \param  name Path of entity to process.
  * \param  fd File descriptor of entity (result of open).
  * \param  st Stat structure of entity (result of stat).
  * \return 0 if ok, 1 if error.
  */
-static int doFile(int verbose, const char *name, int fd, const struct stat *st)
+static int doFile(int verbose, int noop, const char *name, int fd, const struct stat *st)
 {
 	int x = 0;
 	mode_t target;
@@ -311,12 +317,12 @@ static int doFile(int verbose, const char *name, int fd, const struct stat *st)
 
 	target = targetPermission(st->st_mode, x);
 
-	return doChmod(verbose, name, 0, st->st_mode, target);
+	return doChmod(verbose, noop, name, 0, st->st_mode, target);
 }
 
 /****************************************************************************/
 
-static int doEntity(int verbose, const char *name)
+static int doEntity(int verbose, int noop, const char *name)
 {
 	int rv = 0;
 	int fd = 0;
@@ -348,9 +354,9 @@ static int doEntity(int verbose, const char *name)
 		return 1;
 	}
 	if (S_ISDIR(st.st_mode))
-		rv |= doDir(verbose, fullname, fd, &st);
+		rv |= doDir(verbose, noop, fullname, fd, &st);
 	else if (S_ISREG(st.st_mode))
-		rv |= doFile(verbose, fullname, fd, &st);
+		rv |= doFile(verbose, noop, fullname, fd, &st);
 
 	close(fd);
 
@@ -364,8 +370,9 @@ int main(int argc, char *argv[])
 	int rv = 0;
 	int i;
 	int opt;
-	const char options[] = "hv";
+	const char options[] = "hvn";
 	int verbose = 0;
+	int noop = 0;
 
 	while ((opt = getopt(argc, argv, options)) != -1) {
 		switch (opt) {
@@ -374,6 +381,9 @@ int main(int argc, char *argv[])
 				return 0;
 			case 'v':
 				verbose = 1;
+				break;
+			case 'n':
+				noop = 1;
 				break;
 			case '?':
 				fprintf(stderr, "Unknown option/command.\n%s", USAGE);
@@ -385,7 +395,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = optind; i < argc; i++)
-		rv |= doEntity(verbose, argv[i]);
+		rv |= doEntity(verbose, noop, argv[i]);
 
 	return rv;
 }

@@ -344,6 +344,7 @@ static int doEntity(int verbose, const char *name)
 	}
 	if (fstat(fd, &st) != 0) {
 		fprintf(stderr, "%s: fstat error %s\n", fullname, strerror(errno));
+		close(fd);
 		return 1;
 	}
 	if (S_ISDIR(st.st_mode))

@@ -324,23 +324,26 @@ static int doEntity(int verbose, const char *name)
 	char fullname[PATH_MAX+1];
 
 	if (realpath(name, fullname) == NULL) {
-		fprintf(stderr, "Error in realpath of %s: %s\n", name, strerror(errno));
+		fprintf(stderr, "%s: realpath error %s\n", name, strerror(errno));
 		return 1;
 	}
 
 	if (stat(fullname, &st) != 0) {
-		fprintf(stderr, "Error in stat of %s: %s\n", fullname, strerror(errno));
+		fprintf(stderr, "%s: stat error %s\n", fullname, strerror(errno));
 		return 1;
 	}
-	if (!S_ISDIR(st.st_mode) && !S_ISREG(st.st_mode))
+	if (!S_ISDIR(st.st_mode) && !S_ISREG(st.st_mode)) {
+		if(verbose)
+			printf("%s skipped, neither a file nor a directory\n", fullname);
 		return 0;
+	}
 
 	if ((fd = open(fullname, O_RDONLY)) < 0) {
-		fprintf(stderr, "Error opening %s: %s\n", fullname, strerror(errno));
+		fprintf(stderr, "%s: open error %s\n", fullname, strerror(errno));
 		return 1;
 	}
 	if (fstat(fd, &st) != 0) {
-		fprintf(stderr, "Error in fstat of %s: %s\n", fullname, strerror(errno));
+		fprintf(stderr, "%s: fstat error %s\n", fullname, strerror(errno));
 		return 1;
 	}
 	if (S_ISDIR(st.st_mode))

@@ -11,6 +11,7 @@ execpermfix - fixes executable permissions
 = SYNOPSIS =
 
 **execpermfix** [-h]
+
 **execpermfix** [-v] [-n] <files>
 
 

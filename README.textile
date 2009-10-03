@@ -5,7 +5,9 @@ execpermfix - fixes executable permissions
 
 h1. SYNOPSIS
 
-**execpermfix** [-h] **execpermfix** [-v] [-n] &lt;files&gt;
+**execpermfix** [-h]
+
+**execpermfix** [-v] [-n] &lt;files&gt;
 
 h1. DESCRIPTION
 

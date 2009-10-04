@@ -16,6 +16,9 @@ execpermfix.o: execpermfix.c
 execpermfix.1: manual.t2t
 	txt2tags -t man -i $^ -o $@
 
+README.textile: manual.t2t
+	txt2tags -t textile -H -i $^ -o $@
+
 clean:
 	rm -f execpermfix.o execpermfix
 

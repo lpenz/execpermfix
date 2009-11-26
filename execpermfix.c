@@ -219,7 +219,7 @@ static int filenameIsExec(const char *name, const char *dir, const char *bname, 
  */
 static int fileIsMagicExec(const char *name, int fd, const struct stat *st)
 {
-	const char scriptMagic[] = "#!/";
+	const char scriptMagic[] = "#!";
 	struct {
 		uint8_t ei_magic[4];
 		uint8_t ei_class;

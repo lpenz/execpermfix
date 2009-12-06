@@ -1,3 +1,9 @@
+execpermfix (1.0.2) unstable; urgency=low
+
+  * Detect as executable scripts that have a space after initial #!
+
+ -- Leandro Lisboa Penz <lpenz@terra.com.br>  Sun, 06 Dec 2009 21:13:02 -0200
+
 execpermfix (1.0.1) unstable; urgency=low
 
   * Usage information.

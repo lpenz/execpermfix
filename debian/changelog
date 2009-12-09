@@ -1,3 +1,10 @@
+execpermfix (1.0.3) unstable; urgency=low
+
+  * Install in /usr/bin instead of in /
+  * Conform to standard 3.8.3, no change necessary.
+
+ -- Leandro Lisboa Penz <lpenz@terra.com.br>  Tue, 08 Dec 2009 22:08:07 -0200
+
 execpermfix (1.0.2) unstable; urgency=low
 
   * Detect as executable scripts that have a space after initial #!

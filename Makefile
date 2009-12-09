@@ -1,6 +1,7 @@
 
 DESTDIR=/usr/local
 BINDIR=$(DESTDIR)/bin
+MANDIR=$(DESTDIR)/share/man
 
 CFLAGS=-Wall -Werror
 
@@ -25,4 +26,6 @@ clean:
 install: execpermfix
 	mkdir -p $(BINDIR)
 	install execpermfix $(BINDIR)/execpermfix
+	mkdir -p $(MANDIR)/man1
+	install execpermfix.1 $(MANDIR)/man1/execpermfix.1
 

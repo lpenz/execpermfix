@@ -2,7 +2,7 @@ Source: execpermfix
 Section: utils
 Priority: extra
 Maintainer: Leandro Lisboa Penz <lpenz@terra.com.br>
-Build-Depends: debhelper (>= 7), make (>= 3.81-5), libc6-dev (>= 2.7-18), gcc (>= 4:4.3.2-2), coreutils (>= 6.10-6), txt2tags (>=1)
+Build-Depends: debhelper (>= 7.0.50), make (>= 3.81-5), libc6-dev (>= 2.7-18), gcc (>= 4:4.3.2-2), coreutils (>= 6.10-6), txt2tags (>=1)
 Standards-Version: 3.8.3
 Homepage: http://github.com/lpenz/execpermfix
 

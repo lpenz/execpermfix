@@ -19,6 +19,9 @@
 #include <dirent.h>
 #include <getopt.h>
 
+#define PROGRAM_NAME "execpermfix"
+#define PROGRAM_VERSION "1.0.4"
+
 #define S_IX (S_IXUSR | S_IXGRP | S_IXOTH)
 #define S_DEF (0644)
 
@@ -370,7 +373,7 @@ int main(int argc, char *argv[])
 	int rv = 0;
 	int i;
 	int opt;
-	const char options[] = "hvn";
+	const char options[] = "hvVn";
 	int verbose = 0;
 	int noop = 0;
 
@@ -381,6 +384,10 @@ int main(int argc, char *argv[])
 				return 0;
 			case 'v':
 				verbose = 1;
+				break;
+			case 'V':
+				printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+				exit(0);
 				break;
 			case 'n':
 				noop = 1;

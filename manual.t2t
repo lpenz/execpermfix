@@ -12,6 +12,8 @@ execpermfix - fixes executable permissions
 
 **execpermfix** [-h]
 
+**execpermfix** [-V]
+
 **execpermfix** [-v] [-n] <files>
 
 
@@ -28,6 +30,8 @@ gives the executable permission to everyone that has read permissions.
 = OPTIONS =
 
 **-h** Help.
+
+**-V** Version information.
 
 **-v** Verbose mode.
 

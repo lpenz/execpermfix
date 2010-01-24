@@ -1,33 +1,44 @@
-
-h1. NAME
-
+<H1>NAME</H1>
+<P>
 execpermfix - fixes executable permissions
-
-h1. SYNOPSIS
-
+</P>
+<H1>SYNOPSIS</H1>
+<P>
 **execpermfix** [-h]
-
+</P>
+<P>
+**execpermfix** [-V]
+</P>
+<P>
 **execpermfix** [-v] [-n] &lt;files&gt;
-
-h1. DESCRIPTION
-
+</P>
+<H1>DESCRIPTION</H1>
+<P>
 **execpermfix** is a program that fixes executable permissions.
-
-It detects which files are executable by checking their names and contents, and gives the executable permission to everyone that has read permissions.
-
-h1. OPTIONS
-
+</P>
+<P>
+It detects which files are executable by checking their names and contents, and
+gives the executable permission to everyone that has read permissions.
+</P>
+<H1>OPTIONS</H1>
+<P>
 **-h** Help.
-
+</P>
+<P>
+**-V** Version information.
+</P>
+<P>
 **-v** Verbose mode.
-
-**-n** Dry-run: no operation is performed. Use with _-v_ to see files with "wrong" permissions.
-
-h1. AUTHOR
-
+</P>
+<P>
+**-n** Dry-run: no operation is performed. Use with <I>-v</I> to see files with
+"wrong" permissions.
+</P>
+<H1>AUTHOR</H1>
+<P>
 Written by Leandro Penz
-
-h1. SEE ALSO
-
+</P>
+<H1>SEE ALSO</H1>
+<P>
 **chmod**(1)
-
+</P>

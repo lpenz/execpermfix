@@ -192,28 +192,6 @@ static int filenameIsNoExec(const char *name, const char *dir, const char *bname
 
 
 /**
- * \brief  Check if a file should BE executable by its name/path.
- * \param  name Path of entity to process.
- * \param  dir Directory of file.
- * \param  bname Basename of file.
- * \param  ext Extension of file.
- * \return 0 if executable, 1 if not executable.
- */
-static int filenameIsExec(const char *name, const char *dir, const char *bname, const char *ext)
-{
-	const static char *extsExec[] = {
-		"py", "pl", "sh"
-	};
-	int i;
-
-	for (i = 0; i < sizeof(extsExec) / sizeof(*extsExec); i++)
-		if (strcmp(ext, extsExec[i]) == 0)
-			return 1;
-	return 0;
-}
-
-
-/**
  * \brief  Check if a file should BE executable by its contents.
  * \param  name Path of entity to process.
  * \param  fd File descriptor of entity (result of open).
@@ -294,8 +272,6 @@ static int fileIsExec(const char *name, int fd, const struct stat *st)
 
 	if (filenameIsNoExec(name, dir, bname, ext))
 		return 0;
-	else if (filenameIsExec(name, dir, bname, ext))
-		return 1;
 
 	return 0;
 }

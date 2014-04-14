@@ -20,7 +20,7 @@
 #include <getopt.h>
 
 #define PROGRAM_NAME "execpermfix"
-#define PROGRAM_VERSION "1.0.4"
+#define PROGRAM_VERSION "1.0.5"
 
 #define S_IX (S_IXUSR | S_IXGRP | S_IXOTH)
 #define S_DEF (0644)

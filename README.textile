@@ -10,35 +10,20 @@ execpermfix - fixes executable permissions
 **execpermfix** [-V]
 </P>
 <P>
-**execpermfix** [-v] [-n] &lt;files&gt;
+**execpermfix** &lt;file-or-directory&gt;
 </P>
 <H1>DESCRIPTION</H1>
 <P>
 **execpermfix** is a program that fixes executable permissions.
 </P>
 <P>
-It detects which files are executable by checking their names and contents, and
-gives the executable permission to everyone that has read permissions.
-</P>
-<H1>OPTIONS</H1>
-<P>
-**-h** Help.
-</P>
-<P>
-**-V** Version information.
-</P>
-<P>
-**-v** Verbose mode.
-</P>
-<P>
-**-n** Dry-run: no operation is performed. Use with <I>-v</I> to see files with
-"wrong" permissions.
+It finds plain files that executable according to their contents, and sets their executable bit, chmod +x.  This is done recursively if it is passed a directory.
 </P>
 <H1>AUTHOR</H1>
 <P>
-Written by Leandro Penz
+Written by Leandro Penz, rewritten in shell by Barak A. Pearlmutter.
 </P>
 <H1>SEE ALSO</H1>
 <P>
-**chmod**(1)
+**chmod**(1), **find**(1)
 </P>

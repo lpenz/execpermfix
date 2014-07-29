@@ -1,8 +1,7 @@
 language: c
 compiler:
   - gcc
-script: make
+  - clang
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq txt2tags
-

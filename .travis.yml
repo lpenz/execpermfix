@@ -9,4 +9,4 @@ script:
   - mkdir build
   - cd build
   - CFLAGS="-Wall -Werror -W" cmake ..
-  - make
+  - make VERBOSE=1

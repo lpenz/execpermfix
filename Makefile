@@ -17,10 +17,6 @@ execpermfix.o: execpermfix.c
 execpermfix.1: manual.t2t
 	txt2tags -t man -i $^ -o $@
 
-README.textile: manual.t2t
-	txt2tags -t html -H -i $^ -o $@
-	sed -i -e 's@<B>@**@g' -e 's@</B>@**@g' $@
-
 clean:
 	rm -f execpermfix.o execpermfix
 

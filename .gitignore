@@ -1,14 +1,3 @@
-/.sconsign.dblite
 /execpermfix
 /execpermfix.o
 /execpermfix.1
-/.find.txt
-/ID
-/build-stamp
-/configure-stamp
-/debian/execpermfix.debhelper.log
-/debian/execpermfix.substvars
-/debian/execpermfix/
-/debian/files
-/manual.1
-/tags

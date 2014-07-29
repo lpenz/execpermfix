@@ -1,29 +1,22 @@
 /****************************************************************************/
 /**
  * \file
- * \brief  Fixes exec permissions of files.
+ * \brief  Fixes executable permissions of files and directories.
  */
 /****************************************************************************/
 
-#define _GNU_SOURCE
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
-#include <sys/mman.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <getopt.h>
 
 #define PROGRAM_NAME "execpermfix"
 #define PROGRAM_VERSION "1.0.5"
-
-#define S_IX (S_IXUSR | S_IXGRP | S_IXOTH)
-#define S_DEF (0644)
 
 /****************************************************************************/
 
@@ -32,164 +25,11 @@ const char USAGE[] =
 "Fixes executable permission of files based on the file type and on the\n"
 "current read permissions.\n\n"
 "    -h    This help.\n"
+"    -V    Version information.\n"
 "    -v    Verbose mode.\n"
 "    -n    Performs a trial run, no changes are made.\n";
 
 /****************************************************************************/
-
-/**
- * \brief  Processes a file or a directory recursively.
- * \param  verbose 1 to print actions.
- * \param  noop Do not perform any change.
- * \param  name Path of entity to process.
- * \return 0 if ok, 1 if error.
- */
-static int doEntity(int verbose, int noop, const char *name);
-
-/****************************************************************************/
-
-/**
- * \brief  Calculates target permissions.
- * \param  current Current permissions.
- * \param  x 1 to turn on executable permissions, 0 to turn off.
- * \return Target permissions.
- */
-static mode_t targetPermission(mode_t current, int x)
-{
-	mode_t rv = current & ~S_IX;
-
-	if (x) {
-		if(current & S_IRUSR)
-			rv |= S_IXUSR;
-		if(current & S_IRGRP)
-			rv |= S_IXGRP;
-		if(current & S_IROTH)
-			rv |= S_IXOTH;
-	}
-
-	return rv;
-}
-
-/****************************************************************************/
-
-/**
- * \brief  Does the chmod call for files and dirs.
- * \param  verbose 1 to print actions.
- * \param  noop Do not perform any change.
- * \param  name Path of entity to process.
- * \param  isdir 1 if it's a directory, 0 if it's a file.
- * \param  orig Original permissions.
- * \param  target Target permissions.
- * \return 0 if ok, 1 if error.
- */
-static int doChmod(int verbose, int noop, const char *name, int isdir, mode_t orig, mode_t target)
-{
-	const char *df[] = { "file", "dir" };
-	const char *type;
-
-	if(orig == target)
-		return 0;
-
-	if(isdir < 0 || isdir > 1) {
-		fprintf(stderr, "Fatal error in isdir");
-		abort();
-	}
-
-	type = df[isdir];
-
-	if(noop) {
-		if(verbose)
-			printf("%s: %s %o would change to %o\n", name, type, orig, target);
-		return 0;
-	}
-
-	if (chmod(name, target) < 0) {
-		fprintf(stderr, "%s: %s chmod error %s\n", name, type, strerror(errno));
-		return 1;
-	}
-
-	if(verbose)
-		printf("%s: %s %o changed to %o\n", name, type, orig, target);
-
-	return 0;
-}
-
-/****************************************************************************/
-
-/**
- * \brief  Processes a directory recursively.
- * \param  verbose 1 to print actions.
- * \param  noop Do not perform any change.
- * \param  name Path of entity to process.
- * \param  fd File descriptor of entity (result of open).
- * \param  st Stat structure of entity (result of stat).
- * \return 0 if ok, 1 if error.
- */
-static int doDir(int verbose, int noop, const char *name, int fd, const struct stat *st)
-{
-	DIR *dir;
-	struct dirent entry;
-	struct dirent *result;
-	int rv = 0;
-
-	dir = fdopendir(fd);
-
-	while (readdir_r(dir, &entry, &result) == 0 && result) {
-		char *namesub;
-		int namesubSize;
-		mode_t target = targetPermission(st->st_mode, 1);
-
-		if (strcmp(entry.d_name, ".") == 0
-				|| strcmp(entry.d_name, "..") == 0)
-			continue;
-
-		namesubSize = strlen(name) + strlen(entry.d_name) + 2;
-		namesub = malloc(namesubSize);
-		snprintf(namesub, namesubSize, "%s/%s", name, entry.d_name);
-		rv |= doEntity(verbose, noop, namesub);
-		free(namesub);
-
-		rv |= doChmod(verbose, noop, name, 1, st->st_mode, target);
-	}
-
-	closedir(dir);
-
-	return rv;
-}
-
-/****************************************************************************/
-
-/**
- * \brief  Check if a file should NOT BE executable by its name/path.
- * \param  name Path of entity to process.
- * \param  dir Directory of file.
- * \param  bname Basename of file.
- * \param  ext Extension of file.
- * \return 0 if not executable, 1 if executable.
- */
-static int filenameIsNoExec(const char *name, const char *dir, const char *bname, const char *ext)
-{
-	const static char *extsNoExec[] = {
-		"h", "c", "o", "a", "d",
-		"t2t", "mk", "txt", "dox",
-	};
-	int i;
-
-	if (strcmp(bname, "Makefile") == 0)
-		return 1;
-
-	for (i = 0; i < sizeof(extsNoExec) / sizeof(*extsNoExec); i++)
-		if (strcmp(ext, extsNoExec[i]) == 0)
-			return 1;
-
-	if (strcmp(dir, "CVS") == 0)
-		return 1;
-	if (strcmp(dir, ".git") == 0)
-		return 1;
-
-	return 0;
-}
-
 
 /**
  * \brief  Check if a file should BE executable by its contents.
@@ -198,7 +38,7 @@ static int filenameIsNoExec(const char *name, const char *dir, const char *bname
  * \param  st Stat structure of entity (result of stat).
  * \return 0 if not executable, 1 if executable, -1 if error.
  */
-static int fileIsMagicExec(const char *name, int fd, const struct stat *st)
+static int fileIsExec(const char *name, int fd, const struct stat *st)
 {
 	const char scriptMagic[] = "#!";
 	struct {
@@ -210,136 +50,106 @@ static int fileIsMagicExec(const char *name, int fd, const struct stat *st)
 		uint16_t e_type;
 	} *eh;
 	const char elfMagic[] = { 0x7f, 0x45, 0x4c, 0x46 };
-	void *f;
+	char buf[sizeof(*eh)];
+	int r;
+	int s;
 
-	if ((f = mmap(NULL, st->st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
-		return -1;
+	s = st->st_size > (signed)sizeof(*eh) ? (signed)sizeof(*eh) : st->st_size;
 
-	if (st->st_size >= sizeof scriptMagic - 1
-			&& memcmp(f, scriptMagic, sizeof scriptMagic - 1) == 0) {
-		munmap(f, st->st_size);
-		return 1;
-	}
-
-	eh = f;
-	if (st->st_size >= sizeof(*eh)
-			&& memcmp(eh->ei_magic, elfMagic, sizeof elfMagic) == 0
-			&& ((eh->ei_data == 2 && eh->e_type == 0x0200) || (eh->ei_data == 1 && eh->e_type == 0x0002))) {
-		munmap(f, st->st_size);
-		return 1;
-	}
-
-	munmap(f, st->st_size);
-
-	return 0;
-}
-
-
-/**
- * \brief  Check if a file should BE executable.
- * \param  name Path of entity to process.
- * \param  fd File descriptor of entity (result of open).
- * \param  st Stat structure of entity (result of stat).
- * \return 0 if not executable, 1 if executable, -1 if error.
- */
-static int fileIsExec(const char *name, int fd, const struct stat *st)
-{
-	const char *dirI;
-	char dir[PATH_MAX];
-	const char *bname;
-	const char *ext;
-
-	if (fileIsMagicExec(name, fd, st) == 1)
-		return 1;
-
-	if ((bname = strrchr(name, '/')) == NULL)
-		return -1;
-	bname++;
-
-	dirI = bname - 2;
-	while (*dirI != '/') {
-		dirI--;
-		if (dirI < name)
-			return -1;
-	}
-	memcpy(dir, dirI + 1, bname - dirI - 2);
-	dir[bname-dirI-2] = 0;
-
-	if ((ext = strrchr(bname, '.')) != NULL && ext != bname)
-		ext++;
-	else
-		ext = "";
-
-	if (filenameIsNoExec(name, dir, bname, ext))
+	if (s < 2)
 		return 0;
 
-	return 0;
-}
-
-
-/**
- * \brief  Processes a file.
- * \param  verbose 1 to print actions.
- * \param  noop Do not perform any change.
- * \param  name Path of entity to process.
- * \param  fd File descriptor of entity (result of open).
- * \param  st Stat structure of entity (result of stat).
- * \return 0 if ok, 1 if error.
- */
-static int doFile(int verbose, int noop, const char *name, int fd, const struct stat *st)
-{
-	int x = 0;
-	mode_t target;
-
-	if ((x = fileIsExec(name, fd, st)) < 0)
+	if ((r = read(fd, buf, s)) < 0) {
+		fprintf(stderr, "%s: error in read\n", name);
+		return -1;
+	}
+	
+	if (r >= (signed)(sizeof scriptMagic - 1)
+			&& memcmp(buf, scriptMagic, sizeof scriptMagic - 1) == 0) {
 		return 1;
+	}
 
-	target = targetPermission(st->st_mode, x);
+	eh = (typeof(eh))buf;
+	if (r >= (signed)sizeof(*eh)
+			&& memcmp(eh->ei_magic, elfMagic, sizeof elfMagic) == 0
+			&& ((eh->ei_data == 2 && eh->e_type == 0x0200) || (eh->ei_data == 1 && eh->e_type == 0x0002))) {
+		return 1;
+	}
 
-	return doChmod(verbose, noop, name, 0, st->st_mode, target);
+	return 0;
 }
 
 /****************************************************************************/
 
+/**
+ * \brief  Processes a file or a directory recursively.
+ * \param  verbose 1 to print actions.
+ * \param  noop Do not perform any change.
+ * \param  name Path of entity to process.
+ * \return 0 if ok, 1 if error.
+ */
 static int doEntity(int verbose, int noop, const char *name)
 {
-	int rv = 0;
 	int fd = 0;
 	struct stat st;
 	char fullname[PATH_MAX+1];
+	int exec;
+	mode_t mode;
 
 	if (realpath(name, fullname) == NULL) {
 		fprintf(stderr, "%s: realpath error %s\n", name, strerror(errno));
 		return 1;
 	}
 
-	if (stat(fullname, &st) != 0) {
-		fprintf(stderr, "%s: stat error %s\n", fullname, strerror(errno));
+	if ((fd = open(fullname, O_RDONLY)) < 0) {
+		fprintf(stderr, "%s: open error %s\n", fullname, strerror(errno));
 		return 1;
 	}
+
+	if (fstat(fd, &st) != 0) {
+		fprintf(stderr, "%s: fstat error %s\n", fullname, strerror(errno));
+		close(fd);
+		return 1;
+	}
+
 	if (!S_ISDIR(st.st_mode) && !S_ISREG(st.st_mode)) {
 		if(verbose)
 			printf("%s skipped, neither a file nor a directory\n", fullname);
 		return 0;
 	}
 
-	if ((fd = open(fullname, O_RDONLY)) < 0) {
-		fprintf(stderr, "%s: open error %s\n", fullname, strerror(errno));
-		return 1;
-	}
-	if (fstat(fd, &st) != 0) {
-		fprintf(stderr, "%s: fstat error %s\n", fullname, strerror(errno));
-		close(fd);
-		return 1;
-	}
+	/* Decide if file is executable: */
+	exec = 0;
 	if (S_ISDIR(st.st_mode))
-		rv |= doDir(verbose, noop, fullname, fd, &st);
+		exec = 1;
 	else if (S_ISREG(st.st_mode))
-		rv |= doFile(verbose, noop, fullname, fd, &st);
+		exec = fileIsExec(fullname, fd, &st);
+	if (exec < 0)
+		return -1;
+
+	/* Define mode: */
+	mode = st.st_mode;
+	if (exec)
+		mode &= ~0111;
+	else
+		mode |= (mode & 0444) >> 2;
+
+	/* Set permission: */
+	if(noop) {
+		if(verbose)
+			printf("%s: %o would change to %o\n", name, st.st_mode, mode);
+		return 0;
+	}
+	if (fchmod(fd, mode) < 0) {
+		fprintf(stderr, "%s: chmod error %s\n", name, strerror(errno));
+		return 1;
+	}
+	if(verbose)
+		printf("%s: %o changed to %o\n", name, st.st_mode, mode);
 
 	close(fd);
 
-	return rv;
+	return 0;
 }
 
 /****************************************************************************/

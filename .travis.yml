@@ -5,3 +5,8 @@ compiler:
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq txt2tags
+script:
+  - mkdir build
+  - cd build
+  - CFLAGS="-Wall -Werror -W" cmake ..
+  - make

@@ -14,3 +14,10 @@ add_custom_command(
 	)
 add_custom_target(manual ALL DEPENDS execpermfix.1)
 
+
+# Tests:
+enable_testing()
+
+add_test (NAME test_execpermfix
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/test_execpermfix)
+

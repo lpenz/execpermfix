@@ -130,12 +130,22 @@ static int doEntity(int verbose, int noop, const char *name)
 		return -1;
 	}
 
+	if(verbose)
+		printf("%s: file is %sexecutable\n", name, exec ? "" : "not ");
+
 	/* Define mode: */
 	mode = st.st_mode;
 	if (exec)
 		mode &= ~0111;
 	else
 		mode |= (mode & 0444) >> 2;
+
+	if (mode == st.st_mode) {
+		if(verbose)
+			printf("%s: %o would not be changed\n", name, st.st_mode);
+		close(fd);
+		return 0;
+	}
 
 	/* Set permission: */
 	if(noop) {

@@ -136,9 +136,9 @@ static int doEntity(int verbose, int noop, const char *name)
 	/* Define mode: */
 	mode = st.st_mode;
 	if (exec)
-		mode &= ~0111;
-	else
 		mode |= (mode & 0444) >> 2;
+	else
+		mode &= ~0111;
 
 	if (mode == st.st_mode) {
 		if(verbose)

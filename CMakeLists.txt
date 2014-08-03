@@ -3,8 +3,10 @@ cmake_minimum_required (VERSION 2.6)
 
 project (execpermfix)
 
-add_executable(execpermfix execpermfix.c)
+# Executable:
+add_executable(execpermfix src/execpermfix.c)
 
+# Manual:
 add_custom_command(
 	OUTPUT execpermfix.1
 	DEPENDS manual.t2t

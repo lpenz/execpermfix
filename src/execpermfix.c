@@ -115,6 +115,7 @@ static int doEntity(int verbose, int noop, const char *name)
 	if (!S_ISDIR(st.st_mode) && !S_ISREG(st.st_mode)) {
 		if(verbose)
 			printf("%s skipped, neither a file nor a directory\n", fullname);
+		close(fd);
 		return 0;
 	}
 
@@ -124,8 +125,10 @@ static int doEntity(int verbose, int noop, const char *name)
 		exec = 1;
 	else if (S_ISREG(st.st_mode))
 		exec = fileIsExec(fullname, fd, &st);
-	if (exec < 0)
+	if (exec < 0) {
+		close(fd);
 		return -1;
+	}
 
 	/* Define mode: */
 	mode = st.st_mode;
@@ -138,10 +141,12 @@ static int doEntity(int verbose, int noop, const char *name)
 	if(noop) {
 		if(verbose)
 			printf("%s: %o would change to %o\n", name, st.st_mode, mode);
+		close(fd);
 		return 0;
 	}
 	if (fchmod(fd, mode) < 0) {
 		fprintf(stderr, "%s: chmod error %s\n", name, strerror(errno));
+		close(fd);
 		return 1;
 	}
 	if(verbose)

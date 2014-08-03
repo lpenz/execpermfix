@@ -1,0 +1,80 @@
+#!/usr/bin/python
+'''execpermfix unit tests'''
+
+import os
+import subprocess
+import unittest
+import shutil
+
+
+class TestBase(object):
+    '''Class with basic functions and all tests'''
+
+    def setUp(self):
+        shutil.rmtree('_tmp', ignore_errors = True)
+        os.mkdir('_tmp')
+
+    def tearDown(self):
+        shutil.rmtree('_tmp', ignore_errors = True)
+
+    def assertperms(self, filename, perms):
+        st = os.stat(filename)
+        p = st.st_mode & 0777
+        self.assertEqual('0%o' % p, '0%o' % perms)
+
+    def dotest(self, filename, pre, pos):
+        os.chmod(filename, pre)
+        self.execpermfix(filename)
+        self.assertperms(filename, pos)
+
+    def test_script(self):
+        f = '_tmp/script'
+        open(f,'w').write('#!/bin/sh\necho asdf\n')
+        self.dotest(f, 0600, 0700)
+        self.dotest(f, 0640, 0750)
+        self.dotest(f, 0604, 0705)
+        self.dotest(f, 0700, 0700)
+        self.dotest(f, 0750, 0750)
+        self.dotest(f, 0705, 0705)
+
+    def test_script2(self):
+        f = '_tmp/script'
+        open(f,'w').write('#! /usr/bin/env python\necho asdf\n')
+        self.dotest(f, 0600, 0700)
+
+    def test_notexec(self):
+        f = '_tmp/notexec'
+        open(f,'w').write('echo asdf\n')
+        self.dotest(f, 0700, 0600)
+        self.dotest(f, 0750, 0640)
+        self.dotest(f, 0705, 0604)
+        self.dotest(f, 0600, 0600)
+        self.dotest(f, 0640, 0640)
+        self.dotest(f, 0604, 0604)
+
+    def test_dir(self):
+        f = '_tmp/dir'
+        os.mkdir(f)
+        self.dotest(f, 0600, 0700)
+        self.dotest(f, 0640, 0750)
+        self.dotest(f, 0604, 0705)
+        self.dotest(f, 0700, 0700)
+        self.dotest(f, 0750, 0750)
+        self.dotest(f, 0705, 0705)
+
+
+class TestBare(TestBase, unittest.TestCase):
+    def execpermfix(self, filename):
+        r = subprocess.call(['./execpermfix',filename])
+        self.assertEqual(r, 0)
+
+class TestValgrind(TestBase, unittest.TestCase):
+    def execpermfix(self, filename):
+        r = subprocess.call(['valgrind','-q','--error-exitcode=33','./execpermfix',filename])
+        self.assertNotEqual(r, 33, 'valgrind error')
+        self.assertEqual(r, 0)
+
+
+if __name__ == '__main__':
+    unittest.main()
+

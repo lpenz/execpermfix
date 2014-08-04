@@ -1,12 +1,9 @@
-language: c
-compiler:
-  - gcc
-  - clang
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq txt2tags
+ - sudo apt-get install -qq txt2tags valgrind
+env:
+  - TEST_SUITE=coverage
+  - TEST_SUITE=valgrind
+  - TEST_SUITE=clang
 script:
-  - mkdir build
-  - cd build
-  - CFLAGS="-Wall -Werror -W" cmake ..
-  - make VERBOSE=1
+  - ./tester $TEST_SUITE

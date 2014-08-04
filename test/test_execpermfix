@@ -7,7 +7,7 @@ import unittest
 import shutil
 
 
-class TestBase(object):
+class TestExecpermfix(unittest.TestCase):
     '''Class with basic functions and all tests'''
 
     def setUp(self):
@@ -16,6 +16,16 @@ class TestBase(object):
 
     def tearDown(self):
         shutil.rmtree('_tmp', ignore_errors = True)
+
+    def execpermfix(self, filename):
+        cmd0 = []
+        if os.environ.get('VALGRIND','false') == 'true':
+            cmd0 = ['valgrind','-q','--error-exitcode=33']
+        r = subprocess.call(cmd0 + ['./execpermfix',filename])
+        self.assertNotEqual(r, 33, 'valgrind error')
+        self.assertEqual(r, 0)
+
+        self.assertEqual(r, 0)
 
     def assertperms(self, filename, perms):
         st = os.stat(filename)
@@ -61,18 +71,6 @@ class TestBase(object):
         self.dotest(f, 0700, 0700)
         self.dotest(f, 0750, 0750)
         self.dotest(f, 0705, 0705)
-
-
-class TestBare(TestBase, unittest.TestCase):
-    def execpermfix(self, filename):
-        r = subprocess.call(['./execpermfix',filename])
-        self.assertEqual(r, 0)
-
-class TestValgrind(TestBase, unittest.TestCase):
-    def execpermfix(self, filename):
-        r = subprocess.call(['valgrind','-q','--error-exitcode=33','./execpermfix',filename])
-        self.assertNotEqual(r, 33, 'valgrind error')
-        self.assertEqual(r, 0)
 
 
 if __name__ == '__main__':

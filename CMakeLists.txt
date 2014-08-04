@@ -21,3 +21,6 @@ enable_testing()
 add_test (NAME test_execpermfix
 	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/test_execpermfix)
 
+add_test (NAME test_execpermfix_valgrind
+	COMMAND /bin/sh -c "VALGRIND=true ${CMAKE_CURRENT_SOURCE_DIR}/test/test_execpermfix")
+

@@ -6,39 +6,20 @@
 /****************************************************************************/
 
 #include <stdlib.h>
-#include <string.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 #include <dirent.h>
 
-#define PROGRAM_NAME "execpermfix"
-#define PROGRAM_VERSION "1.0.5"
+// #include "execpermfix.h"
 
 /****************************************************************************/
 
-const char USAGE[] =
-"Usage: execpermfix [-v] [-h] <paths...>\n"
-"Fixes executable permission of files based on the file type and on the\n"
-"current read permissions.\n\n"
-"    -h    This help.\n"
-"    -V    Version information.\n"
-"    -v    Verbose mode.\n"
-"    -n    Performs a trial run, no changes are made.\n";
-
-/****************************************************************************/
-
-/**
- * \brief  Check if a file should BE executable by its contents.
- * \param  name Path of entity to process.
- * \param  fd File descriptor of entity (result of open).
- * \param  st Stat structure of entity (result of stat).
- * \return 0 if not executable, 1 if executable, -1 if error.
- */
-static int fileIsExec(const char *name, int fd, const struct stat *st)
+int fileIsExec(const char *name, int fd, const struct stat *st)
 {
 	const char scriptMagic[] = "#!";
 	struct {
@@ -81,14 +62,7 @@ static int fileIsExec(const char *name, int fd, const struct stat *st)
 
 /****************************************************************************/
 
-/**
- * \brief  Processes a file or a directory recursively.
- * \param  verbose 1 to print actions.
- * \param  noop Do not perform any change.
- * \param  name Path of entity to process.
- * \return 0 if ok, 1 if error.
- */
-static int doEntity(int verbose, int noop, const char *name)
+int execpermfix(const char *name, int noop, int verbose)
 {
 	int fd = 0;
 	struct stat st;
@@ -165,46 +139,5 @@ static int doEntity(int verbose, int noop, const char *name)
 	close(fd);
 
 	return 0;
-}
-
-/****************************************************************************/
-
-int main(int argc, char *argv[])
-{
-	int rv = 0;
-	int i;
-	int opt;
-	const char options[] = "hvVn";
-	int verbose = 0;
-	int noop = 0;
-
-	while ((opt = getopt(argc, argv, options)) != -1) {
-		switch (opt) {
-			case 'h':
-				printf("%s", USAGE);
-				return 0;
-			case 'v':
-				verbose = 1;
-				break;
-			case 'V':
-				printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
-				exit(0);
-				break;
-			case 'n':
-				noop = 1;
-				break;
-			case '?':
-				fprintf(stderr, "Unknown option/command.\n%s", USAGE);
-				return 1;
-			default:
-				fprintf(stderr, "Error: option/command not found!\n%s", USAGE);
-				return 1;
-		}
-	}
-
-	for (i = optind; i < argc; i++)
-		rv |= doEntity(verbose, noop, argv[i]);
-
-	return rv;
 }
 

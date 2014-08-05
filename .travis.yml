@@ -1,6 +1,7 @@
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq txt2tags valgrind
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq txt2tags valgrind
+  - sudo pip install cpp-coveralls
 env:
   - TEST_SUITE=coverage
   - TEST_SUITE=valgrind

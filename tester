@@ -26,6 +26,6 @@ if [ "$SUITE" = "valgrind" ]; then
 fi
 
 if [ "$SUITE" = "coverage" ]; then
-	coveralls --exclude tests --gcov-options '\-lp'
+	(cd ..; coveralls -E '.*CMake.*')
 fi
 

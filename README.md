@@ -2,6 +2,7 @@ execpermfix
 ===========
 
 [![Build Status](https://travis-ci.org/lpenz/execpermfix.png?branch=master)](https://travis-ci.org/lpenz/execpermfix) 
+[![Coverage Status](https://coveralls.io/repos/lpenz/execpermfix/badge.png?branch=master)](https://coveralls.io/r/lpenz/execpermfix?branch=master)
 
 # About
 

@@ -1,0 +1,19 @@
+language: python
+env:
+  - TEST_SUITE=coverage
+  - TEST_SUITE=clang
+install:
+  - sudo apt-get install txt2tags cmake xsltproc lcov
+  - pip install lcov-cobertura
+  - wget https://raw.githubusercontent.com/zanata/zanata-tests/master/scripts/CTest2JUnit.xsl -O ../CTest2JUnit.xsl
+before_script:
+  - mkdir -p shippable/testresults
+  - mkdir -p shippable/codecoverage
+script:
+  - ./tester . $TEST_SUITE
+after_script:
+  - xsltproc ../CTest2JUnit.xsl $TEST_SUITE/Testing/*/Test.xml > shippable/testresults/ctest.xml.tmp && mv shippable/testresults/ctest.xml.tmp shippable/testresults/ctest.xml
+  - lcov --capture --directory . --output-file coverage.lcov
+  - |
+    python $(pip show lcov-cobertura | sed -n 's/^Location: //p')/lcov_cobertura.py coverage.lcov -o shippable/codecoverage/lcov_cobertura.xml
+

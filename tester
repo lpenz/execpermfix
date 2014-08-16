@@ -1,12 +1,12 @@
 #!/bin/bash
 
-SOURCE=$1
-SUITE=$2
+SUITE=$1
+SOURCE="$(cd $(dirname $0); pwd)"
 EXTRA="-D Experimental"
 
 set -x -e
 
-mkdir "$SUITE"
+mkdir -p "$SUITE"
 cd "$SUITE"
 
 if [ "$SUITE" = "clang" ]; then

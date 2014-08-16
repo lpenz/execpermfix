@@ -8,3 +8,6 @@ env:
   - TEST_SUITE=clang
 script:
   - ./tester $TEST_SUITE
+  - |
+    if [ "$TEST_SUITE" = "coverage" ]; then coveralls -E '.*CMake.*'; fi
+

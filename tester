@@ -26,7 +26,3 @@ if [ "$SUITE" = "valgrind" ]; then
 	ctest -D ExperimentalSubmit
 fi
 
-if [ "$SUITE" = "coverage" ]; then
-	coveralls -E '.*CMake.*' -r "$SOURCE"
-fi
-

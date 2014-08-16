@@ -7,4 +7,4 @@ env:
   - TEST_SUITE=valgrind
   - TEST_SUITE=clang
 script:
-  - ./tester . $TEST_SUITE
+  - ./tester $PWD $TEST_SUITE

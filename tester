@@ -6,6 +6,9 @@ EXTRA="-D Experimental"
 
 set -x -e
 
+mkdir "$SUITE"
+cd "$SUITE"
+
 if [ "$SUITE" = "clang" ]; then
 	export CC=clang
 elif [ "$SUITE" = "coverage" ]; then
@@ -24,6 +27,6 @@ if [ "$SUITE" = "valgrind" ]; then
 fi
 
 if [ "$SUITE" = "coverage" ]; then
-	coveralls -E '.*CMake.*'
+	coveralls -E '.*CMake.*' -r "$SOURCE"
 fi
 

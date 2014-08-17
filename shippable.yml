@@ -1,4 +1,7 @@
 language: python
+branches:
+    only:
+      - ship
 env:
   - TEST_SUITE=coverage
   - TEST_SUITE=clang

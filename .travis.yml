@@ -1,12 +1,33 @@
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq txt2tags valgrind
+---
+language: bash
+sudo: required
+services:
+  - docker
+addons:
+  apt:
+    packages:
+      - txt2tags
+      - valgrind
 env:
   - ACTION=coverage
   - ACTION=valgrind
   - ACTION=clang
+  - ACTION=lint
 script:
-  - ./tester $ACTION
+  - |
+    if [ "$ACTION" = lint ]; then
+        docker pull lpenz/omnilint
+        docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
+    else
+        ./tester "$ACTION"
+    fi
+  - |
+    if [ "$ACTION" = coverage ]; then
+        bash <(curl -s https://codecov.io/bash)
+    fi
 after_success:
-  - if [ "$ACTION" = coverage ]; then bash <(curl -s https://codecov.io/bash); fi
+  - |
+    if [ "$ACTION" = coverage ]; then
+        bash <(curl -s https://codecov.io/bash)
+    fi
 

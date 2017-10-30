@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SUITE=$1
-SOURCE="$(cd $(dirname $0); pwd)"
+SOURCE="$(cd "$(dirname "$0")"; pwd)"
 EXTRA="-D Experimental"
 
 set -x -e
@@ -20,7 +20,7 @@ fi
 
 cmake "$SOURCE"
 make VERBOSE=1
-ctest $EXTRA
+ctest "$EXTRA"
 
 if [ "$SUITE" = "valgrind" ]; then
 	ctest -D ExperimentalSubmit

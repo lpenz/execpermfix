@@ -1,13 +1,12 @@
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq txt2tags valgrind
-  - sudo pip install cpp-coveralls
 env:
-  - TEST_SUITE=coverage
-  - TEST_SUITE=valgrind
-  - TEST_SUITE=clang
+  - ACTION=coverage
+  - ACTION=valgrind
+  - ACTION=clang
 script:
-  - ./tester $TEST_SUITE
-  - |
-    if [ "$TEST_SUITE" = "coverage" ]; then coveralls -E '.*CMake.*'; fi
+  - ./tester $ACTION
+after_success:
+  - if [ "$ACTION" = coverage ]; then bash <(curl -s https://codecov.io/bash); fi
 

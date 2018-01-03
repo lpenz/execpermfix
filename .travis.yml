@@ -1,0 +1,25 @@
+---
+sudo: required # docker
+services:
+  - docker
+language: generic
+script:
+  - docker pull debian:stretch
+  - docker run -d --name debian -v "$PWD/..":/home debian:stretch sleep 9999999999
+  - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends git-buildpackage fakeroot cmake gcc build-essential debhelper txt2tags"
+  - docker exec -t debian /bin/bash -c "cd /home/execpermfix && gbp buildpackage --git-ignore-branch -us -uc"
+  - docker rm -f debian
+  - sudo chown -R "$USER:$USER" ../
+  - ls -l ..
+deploy:
+  provider: packagecloud
+  repository: lpenz
+  username: lpenz
+  token:
+    secure: baRx86l7pzXXNDiWQhflqXGXkU4T52Pyc1nIglsPyOA4mxNbIxcO087WQRkXAYSEoj/T2Al+BmdiavtmK4Esl3RJko/mihHGFmqXDYNQwrzo9+UZQ3CvhihelFDvUMGQxxYY51F93pmWdhfUbcPfNq1VqOatnuW7ZAPpXSZzqwo=
+  dist: debian/stretch
+  local-dir: '..'
+  package_glob: '*.deb'
+  on:
+    branch: debian-debian
+    tags: true

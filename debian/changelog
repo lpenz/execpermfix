@@ -1,0 +1,23 @@
+execpermfix (1.0.6-1) UNRELEASED; urgency=low
+
+  * New upstream version 1.0.6.
+
+ -- Leandro Lisboa Penz <lpenz@lpenz.org>  Fri, 12 Jan 2018 16:35:40 -0200
+
+execpermfix (1.0.5-1) unstable; urgency=low
+
+  * New upstream version 1.0.5.
+
+ -- Leandro Lisboa Penz <lpenz@lpenz.org>  Sun, 13 Apr 2014 22:11:38 -0300
+
+execpermfix (1.0.4-2) unstable; urgency=low
+
+  * Signing with new key.
+
+ -- Leandro Lisboa Penz <lpenz@lpenz.org>  Sun, 17 Mar 2013 10:11:21 -0300
+
+execpermfix (1.0.4-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Leandro Lisboa Penz <llpenz@gmail.com>  Sat, 02 Jan 2010 11:51:20 -0200

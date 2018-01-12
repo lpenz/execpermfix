@@ -29,4 +29,3 @@ int fileIsExec(const char *name, int fd, const struct stat *st);
 int execpermfix(const char *name, int noop, int verbose);
 
 #endif /* EXECPERMFIX_H_INCLUDED */
-

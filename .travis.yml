@@ -1,31 +1,37 @@
 ---
-sudo: required # docker
-services:
-  - docker
 addons:
   apt:
     packages:
       - txt2tags
-      - valgrind
+language: c
+script:
+  - cmake .
+  - make VERBOSE=1
+  - ctest $CTESTFLAGS
 jobs:
   include:
     - env: [ ACTION=omnilint ]
       language: generic
-      script:
-        - docker pull lpenz/omnilint
-        - docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
+      sudo: required # docker
+      services: [ docker ]
+      install: docker pull lpenz/omnilint
+      script: docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
     - env: [ ACTION=format ]
       language: generic
+      sudo: required # docker
+      services: [ docker ]
+      install: docker pull debian:stretch
       script:
-        - docker pull debian:stretch
         - docker run -d --name debian -v "$PWD:$PWD" debian:stretch sleep 9999999999
         - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends clang-format"
         - docker exec -t debian find "$PWD" \( -name '*.[ch]' -o -name '*.cc' \) -exec clang-format -i {} +
         - git diff --exit-code
     - env: [ ACTION=clang-check+tidy ]
       language: generic
+      sudo: required # docker
+      services: [ docker ]
+      install: docker pull debian:stretch
       script:
-        - docker pull debian:stretch
         - docker run -d --name debian -v "$PWD:$PWD" debian:stretch sleep 9999999999
         - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends cmake make pkg-config libgtk2.0-dev make gkrellm clang clang-tidy"
         - docker exec -t debian /bin/bash -c "cd $PWD && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ."
@@ -34,19 +40,11 @@ jobs:
             R=$?
             docker exec -t debian find "$PWD" \( -name '*.[ch]' -o -name '*.cc' \) -exec clang-tidy -p $PWD {} +
             exit $(($?+R))
-    - env : [ ACTION=coverage ]
-    - env : [ ACTION=valgrind ]
-    - env : [ ACTION=clang ]
-language: c
-script:
-  - ./tester "$ACTION"
-  - |
-    if [ "$ACTION" = coverage ]; then
-        bash <(curl -s https://codecov.io/bash)
-    fi
-after_success:
-  - |
-    if [ "$ACTION" = coverage ]; then
-        bash <(curl -s https://codecov.io/bash)
-    fi
 
+    - env: [ ACTION=coverage, CFLAGS=--coverage, CXXFLAGS=--coverage ]
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+    - env: [ ACTION=valgrind, CTESTFLAGS='-D ExperimentalMemCheck' ]
+      addons: { apt: { packages: [ txt2tags, valgrind ] } }
+    - env: [ ACTION=clang ]
+      compiler: clang

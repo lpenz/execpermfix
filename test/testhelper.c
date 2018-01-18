@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     execpermfix(filename, 0, 0);
     stat(filename, &st);
     printf("filename %s, pre 0%o, pos 0%o, curr 0%o\n", filename, pre, pos,
-           st.st_mode);
+           0777 & st.st_mode);
 
     return pos == (0777 & st.st_mode) ? 0 : 1;
 }

@@ -48,3 +48,14 @@ jobs:
       addons: { apt: { packages: [ txt2tags, valgrind ] } }
     - env: [ ACTION=clang ]
       compiler: clang
+    - env: [ ACTION=clang-sanitize-address, CFLAGS=-fsanitize=address ]
+      compiler: clang
+    - env: [ ACTION=clang-sanitize-memory, CFLAGS=-fsanitize=memory ]
+      compiler: clang
+    - env: [ ACTION=clang-sanitize-undefined, CFLAGS=-fsanitize=undefined ]
+      compiler: clang
+    - env: [ ACTION=clang-sanitize-dataflow, CFLAGS=-fsanitize=dataflow ]
+      compiler: clang
+    - env: [ ACTION=clang-sanitize-safe-stack, CFLAGS=-fsanitize=safe-stack ]
+      compiler: clang
+

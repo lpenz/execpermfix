@@ -5,11 +5,12 @@ addons:
       - txt2tags
 language: c
 script:
-  - mkdir _build
+  - mkdir _build _install
   - cd _build
-  - cmake ..
+  - cmake -DCMAKE_INSTALL_PREFIX=../_install ..
   - make VERBOSE=1
   - ctest $CTESTFLAGS
+  - make install
 jobs:
   include:
     - env: [ ACTION=omnilint ]

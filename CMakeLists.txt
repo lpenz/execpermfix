@@ -3,6 +3,8 @@ cmake_minimum_required (VERSION 2.6)
 
 project (execpermfix)
 
+include(GNUInstallDirs)
+
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -W")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -W")
@@ -18,7 +20,22 @@ add_custom_command(
 	DEPENDS manual.t2t
 	COMMAND txt2tags -q -t man -i ${CMAKE_CURRENT_SOURCE_DIR}/manual.t2t -o ${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1
 	)
-add_custom_target(manual ALL DEPENDS execpermfix.1)
+add_custom_command(
+	OUTPUT execpermfix.1.gz
+	DEPENDS execpermfix.1
+	COMMAND gzip -9k ${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1
+	)
+add_custom_target(manual ALL DEPENDS execpermfix.1.gz)
+
+# Install:
+install (
+    TARGETS execpermfix
+    DESTINATION bin
+    )
+install (
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1.gz
+    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/
+    )
 
 # Tests:
 include(CTest)

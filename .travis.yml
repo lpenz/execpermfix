@@ -5,7 +5,9 @@ addons:
       - txt2tags
 language: c
 script:
-  - cmake .
+  - mkdir _build
+  - cd _build
+  - cmake ..
   - make VERBOSE=1
   - ctest $CTESTFLAGS
 jobs:

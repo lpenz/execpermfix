@@ -15,14 +15,10 @@ jobs:
   include:
     - env: [ ACTION=omnilint ]
       language: generic
-      sudo: required # docker
-      services: [ docker ]
       install: docker pull lpenz/omnilint
       script: docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
     - env: [ ACTION=format ]
       language: generic
-      sudo: required # docker
-      services: [ docker ]
       install: docker pull debian:stretch
       script:
         - docker run -d --name debian -v "$PWD:$PWD" debian:stretch sleep 9999999999
@@ -31,8 +27,6 @@ jobs:
         - git diff --exit-code
     - env: [ ACTION=clang-check+tidy ]
       language: generic
-      sudo: required # docker
-      services: [ docker ]
       install: docker pull debian:stretch
       script:
         - docker run -d --name debian -v "$PWD:$PWD" debian:stretch sleep 9999999999

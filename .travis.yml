@@ -1,8 +1,4 @@
 ---
-addons:
-  apt:
-    packages:
-      - txt2tags
 language: c
 script:
   - mkdir _build _install
@@ -42,7 +38,7 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
     - env: [ ACTION=valgrind, CTESTFLAGS='-D ExperimentalMemCheck' ]
-      addons: { apt: { packages: [ txt2tags, valgrind ] } }
+      addons: { apt: { packages: [ valgrind ] } }
     - env: [ ACTION=clang ]
       compiler: clang
     - env: [ ACTION=clang-sanitize-address, CFLAGS=-fsanitize=address ]

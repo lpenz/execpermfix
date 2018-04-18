@@ -51,4 +51,16 @@ jobs:
       compiler: clang
     - env: [ ACTION=clang-sanitize-safe-stack, CFLAGS=-fsanitize=safe-stack ]
       compiler: clang
+    - env:
+        - ACTION: coverity
+        - secure: P0+oarlSc0PYIIXqpFNT3hhSn/pqXR1kNQDP6XiQBS/fCaiKZ405HhFuelFdZblD+9efTQC1EliT5VxSv0xFxK15U/bAJnnOLfeH6WICwJusgQ7I0m5cZrQvQJ3Hfyp9csPQwEQJlvSIDLpYJInW/NQ1SsAGaf7pVwF1V9pJF+g=
+      script:
+      addons:
+        coverity_scan:
+          project:
+            name: "lpenz/execpermfix"
+          notification_email: lpenz@lpenz.org
+          build_command_prepend: cmake .
+          build_command: make
+          branch_pattern: master
 

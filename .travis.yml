@@ -9,11 +9,11 @@ script:
   - make install
 jobs:
   include:
-    - env: [ ACTION=omnilint ]
+    - env: [ omnilint ]
       language: generic
       install: docker pull lpenz/omnilint
       script: docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
-    - env: [ ACTION=format ]
+    - env: [ format ]
       language: generic
       install: docker pull debian:stretch
       script:
@@ -21,7 +21,7 @@ jobs:
         - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends clang-format"
         - docker exec -t debian find "$PWD" \( -name '*.[ch]' -o -name '*.cc' \) -exec clang-format -i {} +
         - git diff --exit-code
-    - env: [ ACTION=clang-check+tidy ]
+    - env: [ clang-check+tidy ]
       language: generic
       install: docker pull debian:stretch
       script:
@@ -34,21 +34,21 @@ jobs:
             docker exec -t debian find "$PWD" \( -name '*.[ch]' -o -name '*.cc' \) -exec clang-tidy -p $PWD {} +
             exit $(($?+R))
 
-    - env: [ ACTION=coverage, CFLAGS=--coverage, CXXFLAGS=--coverage ]
+    - env: [ coverage, CFLAGS=--coverage, CXXFLAGS=--coverage ]
       after_success:
         - bash <(curl -s https://codecov.io/bash)
-    - env: [ ACTION=valgrind, CTESTFLAGS='-D ExperimentalMemCheck' ]
+    - env: [ valgrind, CTESTFLAGS='-D ExperimentalMemCheck' ]
       addons: { apt: { packages: [ valgrind ] } }
-    - env: [ ACTION=clang ]
+    - env: [ clang ]
       compiler: clang
-    - env: [ ACTION=clang-sanitize-address, CFLAGS=-fsanitize=address ]
+    - env: [ clang-sanitize-address, CFLAGS=-fsanitize=address ]
       compiler: clang
-    - env: [ ACTION=clang-sanitize-memory, CFLAGS=-fsanitize=memory ]
+    - env: [ clang-sanitize-memory, CFLAGS=-fsanitize=memory ]
       compiler: clang
-    - env: [ ACTION=clang-sanitize-undefined, CFLAGS=-fsanitize=undefined ]
+    - env: [ clang-sanitize-undefined, CFLAGS=-fsanitize=undefined ]
       compiler: clang
-    - env: [ ACTION=clang-sanitize-dataflow, CFLAGS=-fsanitize=dataflow ]
+    - env: [ clang-sanitize-dataflow, CFLAGS=-fsanitize=dataflow ]
       compiler: clang
-    - env: [ ACTION=clang-sanitize-safe-stack, CFLAGS=-fsanitize=safe-stack ]
+    - env: [ clang-sanitize-safe-stack, CFLAGS=-fsanitize=safe-stack ]
       compiler: clang
 

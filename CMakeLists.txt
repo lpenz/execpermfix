@@ -1,3 +1,6 @@
+# Copyright (C) 2014 Leandro Lisboa Penz <lpenz@lpenz.org>
+# This file is subject to the terms and conditions defined in
+# file 'LICENSE.txt', which is part of this source code package.
 
 cmake_minimum_required (VERSION 2.6)
 

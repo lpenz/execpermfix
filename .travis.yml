@@ -26,7 +26,7 @@ jobs:
       install: docker pull debian:stretch
       script:
         - docker run -d --name debian -v "$PWD:$PWD" debian:stretch sleep 9999999999
-        - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends cmake make pkg-config libgtk2.0-dev make gkrellm clang clang-tidy"
+        - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends cmake make pkg-config clang clang-tidy"
         - docker exec -t debian /bin/bash -c "cd $PWD && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ."
         - |
             docker exec -t debian find "$PWD" \( -name '*.[ch]' -o -name '*.cc' \) -exec clang-check -p $PWD {} +

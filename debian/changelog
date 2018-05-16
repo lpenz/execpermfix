@@ -1,3 +1,10 @@
+execpermfix (1.0.7-1) UNRELEASED; urgency=low
+
+  * New upstream version 1.0.7.
+  * txt2tags is no longer a dependency.
+
+ -- Leandro Lisboa Penz <lpenz@lpenz.org>  Wed, 16 May 2018 22:17:51 +0100
+
 execpermfix (1.0.6-1) UNRELEASED; urgency=low
 
   * New upstream version 1.0.6.

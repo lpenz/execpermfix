@@ -1,12 +1,9 @@
 ---
-sudo: required # docker
-services:
-  - docker
 language: generic
+install: docker pull debian:stretch
 script:
-  - docker pull debian:stretch
   - docker run -d --name debian -v "$PWD/..":/home debian:stretch sleep 9999999999
-  - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends git-buildpackage fakeroot cmake gcc build-essential debhelper txt2tags"
+  - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends git-buildpackage fakeroot cmake gcc build-essential debhelper"
   - docker exec -t debian /bin/bash -c "cd /home/execpermfix && gbp buildpackage --git-ignore-branch -us -uc"
   - docker rm -f debian
   - sudo chown -R "$USER:$USER" ../

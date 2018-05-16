@@ -1,3 +1,6 @@
+# Copyright (C) 2014 Leandro Lisboa Penz <lpenz@lpenz.org>
+# This file is subject to the terms and conditions defined in
+# file 'LICENSE.txt', which is part of this source code package.
 
 cmake_minimum_required (VERSION 2.6)
 
@@ -16,14 +19,11 @@ add_executable(execpermfix src/execpermfix.c src/execpermfix_main.c)
 
 # Manual:
 add_custom_command(
-	OUTPUT execpermfix.1
-	DEPENDS manual.t2t
-	COMMAND txt2tags -q -t man -i ${CMAKE_CURRENT_SOURCE_DIR}/manual.t2t -o ${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1
-	)
-add_custom_command(
 	OUTPUT execpermfix.1.gz
 	DEPENDS execpermfix.1
-	COMMAND gzip -k ${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1
+	COMMAND gzip -9kc
+		${CMAKE_CURRENT_SOURCE_DIR}/execpermfix.1 >
+		${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1.gz
 	)
 add_custom_target(manual ALL DEPENDS execpermfix.1.gz)
 

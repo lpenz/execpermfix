@@ -1,9 +1,11 @@
-/****************************************************************************/
+// Copyright (C) 2009 Leandro Lisboa Penz <lpenz@lpenz.org>
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.txt', which is part of this source code package.
+
 /**
  * \file
  * \brief  Fixes executable permissions of files and directories.
  */
-/****************************************************************************/
 
 #define _XOPEN_SOURCE 700  // swab
 #include <arpa/inet.h>

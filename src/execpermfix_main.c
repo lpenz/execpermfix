@@ -1,9 +1,11 @@
-/****************************************************************************/
+// Copyright (C) 2009 Leandro Lisboa Penz <lpenz@lpenz.org>
+// This file is subject to the terms and conditions defined in
+// file 'LICENSE.txt', which is part of this source code package.
+
 /**
  * \file
  * \brief  execpermfix main function.
  */
-/****************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +14,7 @@
 #include "execpermfix.h"
 
 #define PROGRAM_NAME "execpermfix"
-#define PROGRAM_VERSION "1.0.5"
+#define PROGRAM_VERSION "1.0.7"
 
 /****************************************************************************/
 

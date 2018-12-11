@@ -3,7 +3,8 @@ language: generic
 install: docker pull debian:stretch
 script:
   - docker run -d --name debian -v "$PWD/..":/home debian:stretch sleep 9999999999
-  - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends git-buildpackage fakeroot cmake gcc build-essential debhelper"
+  - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends devscripts equivs git-buildpackage"
+  - docker exec -t debian /bin/bash -c "mk-build-deps -i -r --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' /home/execpermfix/debian/control"
   - docker exec -t debian /bin/bash -c "cd /home/execpermfix && gbp buildpackage --git-ignore-branch -us -uc"
   - docker rm -f debian
   - sudo chown -R "$USER:$USER" ../

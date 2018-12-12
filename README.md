@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/lpenz/execpermfix.png?branch=master)](https://travis-ci.org/lpenz/execpermfix) 
 [![codecov](https://codecov.io/gh/lpenz/execpermfix/branch/master/graph/badge.svg)](https://codecov.io/gh/lpenz/execpermfix)
+[![packagecloud](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/app/lpenz/lpenz/search?q=execpermfix)
 
 execpermfix
 ===========

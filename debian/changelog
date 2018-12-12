@@ -1,3 +1,9 @@
+execpermfix (1.0.7-2) UNRELEASED; urgency=low
+
+  * Build for i386 too.
+
+ -- Leandro Lisboa Penz <lpenz@lpenz.org>  Wed, 12 Dec 2018 22:46:10 +0000
+
 execpermfix (1.0.7-1) UNRELEASED; urgency=low
 
   * New upstream version 1.0.7.

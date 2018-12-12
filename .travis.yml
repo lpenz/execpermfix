@@ -1,8 +1,11 @@
 ---
 language: generic
-install: docker pull debian:stretch
+env:
+  - DIST=stretch ARCH=i386
+  - DIST=stretch ARCH=amd64
+install: docker pull lpenz/debian-${DIST}-${ARCH}
 script:
-  - docker run -d --name debian -v "$PWD/..":/home debian:stretch sleep 9999999999
+  - docker run -d --name debian -v "$PWD/..":/home lpenz/debian-${DIST}-${ARCH} sleep 9999999999
   - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends devscripts equivs git-buildpackage"
   - docker exec -t debian /bin/bash -c "mk-build-deps -i -r --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' /home/execpermfix/debian/control"
   - docker exec -t debian /bin/bash -c "cd /home/execpermfix && gbp buildpackage --git-ignore-branch -us -uc"

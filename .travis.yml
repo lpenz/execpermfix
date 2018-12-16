@@ -1,8 +1,10 @@
 ---
 language: generic
+addons: { apt: { packages: [ qemu-user-static ] } }
 env:
   - DIST=stretch ARCH=i386
   - DIST=stretch ARCH=amd64
+  - DIST=stretch ARCH=armhf
 install: docker pull lpenz/debian-${DIST}-${ARCH}
 script:
   - docker run -d --name debian -v "$PWD/..:$PWD/.." lpenz/debian-${DIST}-${ARCH} sleep 9999999999

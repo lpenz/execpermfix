@@ -3,3 +3,4 @@
 .travis.yml     export-ignore
 .clang-format   export-ignore
 .github         export-ignore
+default.nix     export-ignore

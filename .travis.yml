@@ -51,4 +51,7 @@ jobs:
       compiler: clang
     - env: [ clang-sanitize-safe-stack, CFLAGS=-fsanitize=safe-stack ]
       compiler: clang
+    - name: nix
+      language: nix
+      script: nix-build
 

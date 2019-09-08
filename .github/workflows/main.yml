@@ -1,0 +1,72 @@
+---
+name: CI
+on: push
+jobs:
+  build:
+    strategy:
+        matrix:
+          compiler: [ gcc, clang ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: ./.github/actions/build
+        with:
+          compiler: ${{ matrix.compiler }}
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: ./.github/actions/build
+        with:
+          coverage: true
+          cflags: --coverage
+          cxxflags: --coverage
+  valgrind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: ./.github/actions/build
+        with:
+          ctestflags: '-D ExperimentalMemCheck'
+  clang-sanitizers:
+    name: build with clang -fsanitize
+    strategy:
+        matrix:
+          cflags:
+            - -fsanitize=address
+            - -fsanitize=memory
+            - -fsanitize=undefined
+            - -fsanitize=dataflow
+            - -fsanitize=safe-stack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: ./.github/actions/build
+        with:
+          compiler: clang
+          cflags: ${{ matrix.cflags }}
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: ./.github/actions/clang-format
+  clang-analyzers:
+    strategy:
+        matrix:
+          analyzer:
+            - clang-tidy
+            - clang-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: ./.github/actions/clang-analyzers
+        with:
+          analyzer: ${{ matrix.analyzer }}
+  omnilint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: docker://lpenz/omnilint
+      - name: run omnilint
+        run: |
+          docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint

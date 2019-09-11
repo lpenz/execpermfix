@@ -66,7 +66,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/omnilint
-      - name: run omnilint
-        run: |
-          docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
+      - uses: docker://lpenz/omnilint:latest

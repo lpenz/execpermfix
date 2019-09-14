@@ -1,6 +1,0 @@
----
-name: clang-format
-description: 'Check source format with clang-format'
-runs:
-  using: 'docker'
-  image: 'Dockerfile'

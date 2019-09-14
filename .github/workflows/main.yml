@@ -5,27 +5,25 @@ jobs:
   build:
     strategy:
         matrix:
-          compiler: [ gcc, clang ]
+          cc: [ gcc, clang ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: ./.github/actions/build
+      - uses: docker://lpenz/ghaction-cmake:latest
         with:
-          compiler: ${{ matrix.compiler }}
+          cc: ${{ matrix.cc }}
   coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: ./.github/actions/build
+      - uses: docker://lpenz/ghaction-cmake:latest
         with:
-          coverage: true
-          cflags: --coverage
-          cxxflags: --coverage
+          coverage: codecov
   valgrind:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: ./.github/actions/build
+      - uses: docker://lpenz/ghaction-cmake:latest
         with:
           ctestflags: '-D ExperimentalMemCheck'
   clang-sanitizers:
@@ -41,27 +39,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: ./.github/actions/build
+      - uses: docker://lpenz/ghaction-cmake:latest
         with:
-          compiler: clang
+          cc: clang
           cflags: ${{ matrix.cflags }}
   clang-format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: ./.github/actions/clang-format
+      - uses: docker://lpenz/ghaction-cmake:latest
+        with:
+          analyzer: clang-format
   clang-analyzers:
-    strategy:
-        matrix:
-          analyzer:
-            - clang-tidy
-            - clang-check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: ./.github/actions/clang-analyzers
+      - uses: docker://lpenz/ghaction-cmake:latest
         with:
-          analyzer: ${{ matrix.analyzer }}
+          analyzer: clang-tidy
   omnilint:
     runs-on: ubuntu-latest
     steps:

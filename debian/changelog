@@ -1,3 +1,9 @@
+execpermfix (1.0.7-4) UNRELEASED; urgency=low
+
+  * Update to Debian Buster
+
+ -- Leandro Lisboa Penz <lpenz@lpenz.org>  Wed, 02 Oct 2019 20:39:01 +0100
+
 execpermfix (1.0.7-3) UNRELEASED; urgency=low
 
   * Build for armhf too.

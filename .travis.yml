@@ -2,12 +2,13 @@
 language: generic
 addons: { apt: { packages: [ qemu-user-static ] } }
 env:
-  - DIST=stretch ARCH=i386
-  - DIST=stretch ARCH=amd64
-  - DIST=stretch ARCH=armhf
-install: docker pull lpenz/debian-${DIST}-${ARCH}
+  - OS=debian   DIST=buster ARCH=i386
+  - OS=debian   DIST=buster ARCH=amd64
+  - OS=debian   DIST=buster ARCH=armhf
+  - OS=raspbian DIST=buster ARCH=armhf
+install: docker pull lpenz/${OS}-${DIST}-${ARCH}
 script:
-  - docker run -d --name debian -v "$PWD/..:$PWD/.." lpenz/debian-${DIST}-${ARCH} sleep 9999999999
+  - docker run -d --name debian -v "$PWD/..:$PWD/.." "lpenz/${OS}-${DIST}-${ARCH}" sleep 9999999999
   - docker exec -t debian /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends devscripts equivs git-buildpackage"
   - docker exec -t debian /bin/bash -c "mk-build-deps -i -r --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' $PWD/debian/control"
   - docker exec -t debian /bin/bash -c "cd $PWD && gbp buildpackage --git-ignore-branch -us -uc"
@@ -16,11 +17,11 @@ script:
   - ls -l ..
 deploy:
   provider: packagecloud
-  repository: lpenz
+  repository: $OS
   username: lpenz
   token:
     secure: baRx86l7pzXXNDiWQhflqXGXkU4T52Pyc1nIglsPyOA4mxNbIxcO087WQRkXAYSEoj/T2Al+BmdiavtmK4Esl3RJko/mihHGFmqXDYNQwrzo9+UZQ3CvhihelFDvUMGQxxYY51F93pmWdhfUbcPfNq1VqOatnuW7ZAPpXSZzqwo=
-  dist: debian/stretch
+  dist: $OS/$DIST
   local-dir: '..'
   package_glob: '*.deb'
   on:

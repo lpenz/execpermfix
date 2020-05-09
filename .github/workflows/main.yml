@@ -9,21 +9,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:latest
+      - uses: docker://lpenz/ghaction-cmake:v0.6
         with:
           cc: ${{ matrix.cc }}
   coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:latest
+      - uses: docker://lpenz/ghaction-cmake:v0.6
         with:
           coverage: codecov
   valgrind:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:latest
+      - uses: docker://lpenz/ghaction-cmake:v0.6
         with:
           ctestflags: '-D ExperimentalMemCheck'
   clang-sanitizers:
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:latest
+      - uses: docker://lpenz/ghaction-cmake:v0.6
         with:
           cc: clang
           cflags: ${{ matrix.cflags }}
@@ -47,14 +47,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:latest
+      - uses: docker://lpenz/ghaction-cmake:v0.6
         with:
           analyzer: clang-format
   clang-analyzers:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:latest
+      - uses: docker://lpenz/ghaction-cmake:v0.6
         with:
           analyzer: clang-tidy
   omnilint:

@@ -1,62 +1,42 @@
 ---
 name: CI
-on: push
+on: [ push, pull_request ]
 jobs:
-  build:
-    strategy:
-        matrix:
-          cc: [ gcc, clang ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.6
-        with:
-          cc: ${{ matrix.cc }}
   coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.6
+      - uses: docker://lpenz/ghaction-cmake:v0.7
         with:
-          coverage: codecov
-  valgrind:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.6
+          preset: coverage
+      - uses: codecov/codecov-action@v0.1
         with:
-          ctestflags: '-D ExperimentalMemCheck'
-  clang-sanitizers:
-    name: build with clang -fsanitize
+          fail_ci_if_error: true
+  tests:
     strategy:
         matrix:
-          cflags:
-            - -fsanitize=address
-            - -fsanitize=memory
-            - -fsanitize=undefined
-            - -fsanitize=dataflow
-            - -fsanitize=safe-stack
+          preset:
+            - cppcheck
+            - iwyu
+            - clang-tidy
+            - install
+            - clang-sanitizer-address
+            - clang-sanitizer-memory
+            - clang-sanitizer-undefined
+            - clang-sanitizer-dataflow
+            - clang-sanitizer-safe-stack
+            - valgrind
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.6
+      - uses: docker://lpenz/ghaction-cmake:v0.7
         with:
-          cc: clang
-          cflags: ${{ matrix.cflags }}
+          preset: ${{ matrix.preset }}
   clang-format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.6
-        with:
-          analyzer: clang-format
-  clang-analyzers:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.6
-        with:
-          analyzer: clang-tidy
+      - uses: DoozyX/clang-format-lint-action@v0.5
   omnilint:
     runs-on: ubuntu-latest
     steps:

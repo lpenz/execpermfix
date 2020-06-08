@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.7
+      - uses: docker://lpenz/ghaction-cmake:v0.9
         with:
           preset: coverage
       - uses: codecov/codecov-action@v0.1
@@ -17,7 +17,6 @@ jobs:
         matrix:
           preset:
             - cppcheck
-            - iwyu
             - clang-tidy
             - install
             - clang-sanitizer-address
@@ -29,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/ghaction-cmake:v0.7
+      - uses: docker://lpenz/ghaction-cmake:v0.9
         with:
           preset: ${{ matrix.preset }}
   clang-format:

@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM lpenz/raspbian-buster-armhf
 
 # install debian packages:
 ENV DEBIAN_FRONTEND=noninteractive

@@ -1,0 +1,22 @@
+---
+name: build
+description: 'Build and test by using cmake'
+inputs:
+  compiler:
+    description: 'Compiler'
+    default: 'gcc'
+  cflags:
+    description: 'CFLAGS'
+    default: ''
+  cxxflags:
+    description: 'CFLAGS'
+    default: ''
+  coverage:
+    description: 'Send results to codecov: true or false'
+    default: 'false'
+  ctestflags:
+    description: 'flags for ctest'
+    default: ''
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

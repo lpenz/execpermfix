@@ -1,0 +1,62 @@
+---
+name: CI
+on: [push, pull_request]
+jobs:
+  debuild:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        base:
+          - debian-buster-i386
+          - debian-buster-amd64
+          - raspbian-buster-armhf
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-qemu-action@v1
+      - run: |
+          set -x
+          docker pull lpenz/ghaction-debuild:${{ matrix.base }}-devel
+          pwd
+          ls -l
+          git status
+          git diff
+          docker run --workdir /github/workspace --rm \
+            -e HOME \
+            -e GITHUB_JOB \
+            -e GITHUB_REF \
+            -e GITHUB_SHA \
+            -e GITHUB_REPOSITORY \
+            -e GITHUB_REPOSITORY_OWNER \
+            -e GITHUB_RUN_ID \
+            -e GITHUB_RUN_NUMBER \
+            -e GITHUB_RETENTION_DAYS \
+            -e GITHUB_ACTOR \
+            -e GITHUB_WORKFLOW \
+            -e GITHUB_HEAD_REF \
+            -e GITHUB_BASE_REF \
+            -e GITHUB_EVENT_NAME \
+            -e GITHUB_SERVER_URL \
+            -e GITHUB_API_URL \
+            -e GITHUB_GRAPHQL_URL \
+            -e GITHUB_WORKSPACE \
+            -e GITHUB_ACTION \
+            -e GITHUB_EVENT_PATH \
+            -e GITHUB_PATH \
+            -e GITHUB_ENV \
+            -e RUNNER_OS \
+            -e RUNNER_TOOL_CACHE \
+            -e RUNNER_TEMP \
+            -e RUNNER_WORKSPACE \
+            -e ACTIONS_RUNTIME_URL \
+            -e ACTIONS_RUNTIME_TOKEN \
+            -e ACTIONS_CACHE_URL \
+            -e GITHUB_ACTIONS=true \
+            -e CI=true \
+            -v "/var/run/docker.sock":"/var/run/docker.sock" \
+            -v "$RUNNER_TEMP":"/github/home" \
+            -v "$RUNNER_TEMP":"/github/workflow" \
+            -v "$RUNNER_TEMP":"/github/file_commands" \
+            -v "$GITHUB_WORKSPACE":"/github/workspace" \
+            lpenz/ghaction-debuild:${{ matrix.base }}-devel

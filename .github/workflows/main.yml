@@ -9,9 +9,10 @@ jobs:
       - uses: docker://lpenz/ghaction-cmake:v0.9
         with:
           preset: coverage
-      - uses: codecov/codecov-action@v0.1
+      - uses: coverallsapp/github-action@master
         with:
-          fail_ci_if_error: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: lcov.info
   tests:
     strategy:
         matrix:

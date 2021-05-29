@@ -36,6 +36,23 @@ install (
     FILES ${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1.gz
     DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/
     )
+install (
+    FILES README.md LICENSE
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/
+    )
+
+# cpack deb
+
+set(CPACK_GENERATOR DEB)
+set(CPACK_PACKAGE_CONTACT "Leandro Lisboa Penz <lpenz@lpenz.org>")
+set(CPACK_PACKAGE_DESCRIPTION "Fixes executable permissions")
+set(CPACK_DEBIAN_PACKAGE_SECTION utils)
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+execute_process(COMMAND git describe --tags
+                OUTPUT_VARIABLE GIT_DESCRIBE)
+string(REGEX REPLACE "-g[0-9a-f]+\n$" "" CPACK_PACKAGE_VERSION "${GIT_DESCRIBE}")
+set(CPACK_PACKAGE_FILE_NAME "execpermfix-${CPACK_PACKAGE_VERSION}")
+include(CPack)
 
 # Tests:
 include(CTest)
@@ -93,4 +110,3 @@ add_test (NAME test_execpermfix_none_clearO    COMMAND ./testhelper _tmp/none 07
 add_test (NAME test_execpermfix_none_keepU     COMMAND ./testhelper _tmp/none 0600 0600)
 add_test (NAME test_execpermfix_none_keepG     COMMAND ./testhelper _tmp/none 0640 0640)
 add_test (NAME test_execpermfix_none_keepO     COMMAND ./testhelper _tmp/none 0644 0644)
-

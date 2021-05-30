@@ -32,6 +32,16 @@ jobs:
       - uses: docker://lpenz/ghaction-cmake:v0.10
         with:
           preset: ${{ matrix.preset }}
+  debian:
+    needs: [ tests, clang-format, omnilint ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: lpenz/ghaction-cmake@devel
+        with:
+          preset: cpack
   clang-format:
     runs-on: ubuntu-latest
     steps:

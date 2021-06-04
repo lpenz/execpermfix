@@ -13,7 +13,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -W")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
-# Main executable::
+# Main executable:
 include_directories(include)
 add_executable(execpermfix src/execpermfix.c src/execpermfix_main.c)
 

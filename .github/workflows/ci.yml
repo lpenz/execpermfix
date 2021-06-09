@@ -52,6 +52,9 @@ jobs:
       - uses: docker://lpenz/ghaction-cmake:v0.12
         with:
           preset: cpack
+      - run: |
+          dpkg --info *.deb
+          dpkg --contents *.deb
       - uses: docker://lpenz/ghaction-packagecloud:v0.3
         if: github.ref == 'refs/heads/main'
         with:

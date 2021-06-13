@@ -10,14 +10,15 @@ include(GNUInstallDirs)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -W")
-	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -W")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
-# Main executable:
+# Main targets
+
 include_directories(include)
 add_executable(execpermfix src/execpermfix.c src/execpermfix_main.c)
 
-# Manual:
+# Manual
+
 add_custom_command(
 	OUTPUT execpermfix.1.gz
 	DEPENDS execpermfix.1
@@ -27,10 +28,11 @@ add_custom_command(
 	)
 add_custom_target(manual ALL DEPENDS execpermfix.1.gz)
 
-# Install:
+# Install
+
 install (
     TARGETS execpermfix
-    DESTINATION bin
+    DESTINATION bin/
     )
 install (
     FILES ${CMAKE_CURRENT_BINARY_DIR}/execpermfix.1.gz
@@ -54,7 +56,8 @@ string(REGEX REPLACE "-g[0-9a-f]+\n$" "" CPACK_PACKAGE_VERSION "${GIT_DESCRIBE}"
 set(CPACK_PACKAGE_FILE_NAME "execpermfix-${CPACK_PACKAGE_VERSION}")
 include(CPack)
 
-# Tests:
+# Tests
+
 include(CTest)
 
 add_executable(testhelper test/testhelper.c src/execpermfix.c)

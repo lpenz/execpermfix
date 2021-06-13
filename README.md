@@ -1,11 +1,9 @@
 [![CI](https://github.com/lpenz/execpermfix/actions/workflows/ci.yml/badge.svg)](https://github.com/lpenz/execpermfix/actions/workflows/ci.yml)
 [![coveralls](https://coveralls.io/repos/github/lpenz/execpermfix/badge.svg?branch=main)](https://coveralls.io/github/lpenz/execpermfix?branch=main)
-[![packagecloud](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/app/lpenz/lpenz/search?q=execpermfix)
+[![packagecloud](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/app/lpenz/debian/search?q=execpermfix)
 
 execpermfix
 ===========
-
-# About
 
 execpermfix is a tool that fixes executable permissions of files and
 directories.
@@ -20,7 +18,7 @@ all executable bits are cleared.
 Directories are always considered executable.
 
 
-# Usage
+## Usage
 
 ~~~[.sh]
 execpermfix -h
@@ -28,7 +26,7 @@ execpermfix -V
 execpermfix [-v] [-n] <files/directories>
 ~~~
 
-## Options
+### Options
 
 **-h** Help.
 

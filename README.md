@@ -2,8 +2,7 @@
 [![coveralls](https://coveralls.io/repos/github/lpenz/execpermfix/badge.svg?branch=main)](https://coveralls.io/github/lpenz/execpermfix?branch=main)
 [![packagecloud](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/app/lpenz/debian/search?q=execpermfix)
 
-execpermfix
-===========
+# execpermfix
 
 execpermfix is a tool that fixes executable permissions of files and
 directories.

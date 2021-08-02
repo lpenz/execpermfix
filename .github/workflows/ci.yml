@@ -2,6 +2,11 @@
 name: CI
 on: [ push, pull_request ]
 jobs:
+  omnilint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker://lpenz/omnilint:v0.2
   coverage:
     runs-on: ubuntu-latest
     steps:
@@ -37,11 +42,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: DoozyX/clang-format-lint-action@v0.5
-  omnilint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: docker://lpenz/omnilint:v0.2
   packagecloud:
     needs: [ omnilint, clang-format, tests, coverage ]
     runs-on: ubuntu-latest

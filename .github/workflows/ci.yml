@@ -53,8 +53,7 @@ jobs:
         with:
           preset: cpack
       - run: |
-          dpkg --info *.deb
-          dpkg --contents *.deb
+          for f in *.deb; do ls -l "$f"; dpkg --info "$f"; done
       - uses: docker://lpenz/ghaction-packagecloud:v0.3
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:

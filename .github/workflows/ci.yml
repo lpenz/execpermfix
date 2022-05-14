@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://lpenz/ghaction-cmake:0.15
+      - uses: docker://lpenz/ghaction-cmake:0.19
         with:
           preset: coverage
       - uses: coverallsapp/github-action@master
@@ -25,16 +25,16 @@ jobs:
             - cppcheck
             - clang-tidy
             - install
-            - clang-sanitizer-address
-            - clang-sanitizer-memory
-            - clang-sanitizer-undefined
-            - clang-sanitizer-dataflow
-            - clang-sanitizer-safe-stack
+            - clang-sanitize-address
+            - clang-sanitize-memory
+            - clang-sanitize-undefined
+            - clang-sanitize-dataflow
+            - clang-sanitize-safe-stack
             - valgrind
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://lpenz/ghaction-cmake:0.15
+      - uses: docker://lpenz/ghaction-cmake:0.19
         with:
           preset: ${{ matrix.preset }}
   clang-format:
@@ -49,12 +49,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: docker://lpenz/ghaction-cmake:0.15
+      - uses: docker://lpenz/ghaction-cmake:0.19
         with:
           preset: cpack
       - run: |
           for f in *.deb; do ls -l "$f"; dpkg --info "$f"; done
-      - uses: docker://lpenz/ghaction-packagecloud:v0.3
+      - uses: docker://lpenz/ghaction-packagecloud:0.4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           repository: debian/debian/bullseye

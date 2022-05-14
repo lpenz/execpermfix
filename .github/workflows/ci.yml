@@ -109,6 +109,6 @@ jobs:
       - uses: docker://lpenz/ghaction-packagecloud:0.4
         if: steps.version.outputs.version_commit != ''
         with:
-          repository: debian/${{ matrix.variant.distro }}/${{ matrix.variant.version }}
+          repository: ${{ matrix.variant.distro }}/${{ matrix.variant.distro }}/${{ matrix.variant.version }}
         env:
           PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}

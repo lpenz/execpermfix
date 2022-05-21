@@ -35,4 +35,3 @@ execpermfix [-v] [-n] <files/directories>
 
 **-n** Dry-run: do not change any permissions. Use with ``-v`` to check file with wrong permissions.
 
-

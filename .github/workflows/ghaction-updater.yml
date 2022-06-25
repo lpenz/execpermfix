@@ -1,0 +1,13 @@
+---
+on: [ workflow_dispatch ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GHACTION_UPDATER_TOKEN }}
+      - uses: saadmk11/github-actions-version-updater@v0.5.6
+        with:
+          token: ${{ secrets.GHACTION_UPDATER_TOKEN }}
+

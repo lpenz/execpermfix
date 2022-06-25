@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.2
         with:
           token: ${{ secrets.GHACTION_UPDATER_TOKEN }}
       - uses: saadmk11/github-actions-version-updater@v0.5.6

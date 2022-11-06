@@ -5,16 +5,16 @@ jobs:
   omnilint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: docker://lpenz/omnilint:0.4
+      - uses: actions/checkout@v3.1.0
+      - uses: docker://lpenz/omnilint:0.5
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: docker://lpenz/ghaction-cmake:0.19
+      - uses: actions/checkout@v3.1.0
+      - uses: docker://lpenz/ghaction-cmake:0.20.0
         with:
           preset: coverage
-      - uses: coverallsapp/github-action@master
+      - uses: coverallsapp/github-action@1.1.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: lcov.info
@@ -33,26 +33,26 @@ jobs:
             - valgrind
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: docker://lpenz/ghaction-cmake:0.19
+      - uses: actions/checkout@v3.1.0
+      - uses: docker://lpenz/ghaction-cmake:0.20.0
         with:
           preset: ${{ matrix.preset }}
   clang-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: DoozyX/clang-format-lint-action@v0.5
+      - uses: actions/checkout@v3.1.0
+      - uses: DoozyX/clang-format-lint-action@v0.14
   cachix:
     needs: [ omnilint, clang-format, tests, coverage ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
       - id: version
-        uses: docker://lpenz/ghaction-version-gen:0.8.0
-      - uses: cachix/install-nix-action@v16
+        uses: docker://lpenz/ghaction-version-gen:0.11.0
+      - uses: cachix/install-nix-action@v18
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-      - uses: cachix/cachix-action@v10
+      - uses: cachix/cachix-action@v12
         with:
           skipPush: ${{ steps.version.outputs.version_commit == '' }}
           name: lpenz
@@ -87,42 +87,42 @@ jobs:
             distro: raspbian
             version: bullseye
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
-      - uses: docker/setup-qemu-action@v1
-      - uses: docker://lpenz/ghaction-cmake:0.19-386
+      - uses: docker/setup-qemu-action@v2.1.0
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-386
         if: matrix.variant.image == '386'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.19-amd64
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-amd64
         if: matrix.variant.image == 'amd64'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.19-armv6
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-armv6
         if: matrix.variant.image == 'armv6'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.19-armv7
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-armv7
         if: matrix.variant.image == 'armv7'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.19-arm64
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-arm64
         if: matrix.variant.image == 'arm64'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.19-raspbian-buster-armhf
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-raspbian-buster-armhf
         if: matrix.variant.image == 'raspbian-buster-armhf'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.19-raspbian-bullseye-armhf
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-raspbian-bullseye-armhf
         if: matrix.variant.image == 'raspbian-bullseye-armhf'
         with:
           preset: cpack
       - run: |
           for f in *.deb; do ls -l "$f"; dpkg --info "$f"; done
       - id: version
-        uses: docker://lpenz/ghaction-version-gen:0.8.0
+        uses: docker://lpenz/ghaction-version-gen:0.11.0
       - uses: docker://lpenz/ghaction-packagecloud:0.4
         if: steps.version.outputs.version_commit != ''
         with:

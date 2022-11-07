@@ -67,22 +67,19 @@ jobs:
         variant:
           - image: 386
             distro: debian
-            version: buster
+            version: bullseye
           - image: amd64
             distro: debian
-            version: buster
+            version: bullseye
           - image: armv6
             distro: debian
-            version: buster
+            version: bullseye
           - image: armv7
             distro: debian
-            version: buster
+            version: bullseye
           - image: arm64
             distro: debian
-            version: buster
-          - image: raspbian-buster-armhf
-            distro: raspbian
-            version: buster
+            version: bullseye
           - image: raspbian-bullseye-armhf
             distro: raspbian
             version: bullseye
@@ -109,10 +106,6 @@ jobs:
           preset: cpack
       - uses: docker://lpenz/ghaction-cmake:0.20.0-arm64
         if: matrix.variant.image == 'arm64'
-        with:
-          preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.20.0-raspbian-buster-armhf
-        if: matrix.variant.image == 'raspbian-buster-armhf'
         with:
           preset: cpack
       - uses: docker://lpenz/ghaction-cmake:0.20.0-raspbian-bullseye-armhf

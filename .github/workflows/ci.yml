@@ -59,7 +59,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: nix-build
       - run: nix-shell --run "echo OK"
-  packagecloud:
+  publish-packagecloud:
     needs: [ omnilint, clang-format, tests, coverage ]
     runs-on: ubuntu-latest
     strategy:
@@ -80,6 +80,9 @@ jobs:
           - image: arm64
             distro: debian
             version: bullseye
+          - image: ubuntu-focal-amd64
+            distro: ubuntu
+            version: focal
           - image: raspbian-bullseye-armhf
             distro: raspbian
             version: bullseye
@@ -108,6 +111,11 @@ jobs:
         if: matrix.variant.image == 'arm64'
         with:
           preset: cpack
+      - uses: docker://lpenz/ghaction-cmake:0.20.0-ubuntu-focal-amd64
+        if: matrix.variant.image == 'ubuntu-focal-amd64'
+        with:
+          preset: cpack
+          pre_command: git config --global --add safe.directory '*'
       - uses: docker://lpenz/ghaction-cmake:0.20.0-raspbian-bullseye-armhf
         if: matrix.variant.image == 'raspbian-bullseye-armhf'
         with:

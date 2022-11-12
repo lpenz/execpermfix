@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.1.0
-      - uses: docker://lpenz/ghaction-cmake:0.21.0
+      - uses: docker://lpenz/ghaction-cmake:0.21.1
         with:
           preset: coverage
       - uses: coverallsapp/github-action@1.1.3
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.1.0
-      - uses: docker://lpenz/ghaction-cmake:0.21.0
+      - uses: docker://lpenz/ghaction-cmake:0.21.1
         with:
           preset: ${{ matrix.preset }}
   clang-format:
@@ -65,24 +65,15 @@ jobs:
     strategy:
       matrix:
         variant:
-          - image: 386
+          - image: debian-bullseye-amd64
             distro: debian
             version: bullseye
-          - image: amd64
+          - image: debian-bookworm-amd64
             distro: debian
-            version: bullseye
-          - image: armv6
-            distro: debian
-            version: bullseye
-          - image: armv7
-            distro: debian
-            version: bullseye
-          - image: arm64
-            distro: debian
-            version: bullseye
-          - image: ubuntu-focal-amd64
+            version: bookworm
+          - image: ubuntu-jammy-amd64
             distro: ubuntu
-            version: focal
+            version: jammy
           - image: raspbian-bullseye-armhf
             distro: raspbian
             version: bullseye
@@ -91,31 +82,19 @@ jobs:
         with:
           fetch-depth: 0
       - uses: docker/setup-qemu-action@v2.1.0
-      - uses: docker://lpenz/ghaction-cmake:0.21.0-386
-        if: matrix.variant.image == '386'
+      - uses: docker://lpenz/ghaction-cmake:0.21.1-debian-bullseye-amd64
+        if: matrix.variant.image == 'debian-bullseye-amd64'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.21.0-amd64
-        if: matrix.variant.image == 'amd64'
+      - uses: docker://lpenz/ghaction-cmake:0.21.1-debian-bookworm-amd64
+        if: matrix.variant.image == 'debian-bookworm-amd64'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.21.0-armv6
-        if: matrix.variant.image == 'armv6'
+      - uses: docker://lpenz/ghaction-cmake:0.21.1-ubuntu-jammy-amd64
+        if: matrix.variant.image == 'ubuntu-jammy-amd64'
         with:
           preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.21.0-armv7
-        if: matrix.variant.image == 'armv7'
-        with:
-          preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.21.0-arm64
-        if: matrix.variant.image == 'arm64'
-        with:
-          preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.21.0-ubuntu-focal-amd64
-        if: matrix.variant.image == 'ubuntu-focal-amd64'
-        with:
-          preset: cpack
-      - uses: docker://lpenz/ghaction-cmake:0.21.0-raspbian-bullseye-armhf
+      - uses: docker://lpenz/ghaction-cmake:0.21.1-raspbian-bullseye-armhf
         if: matrix.variant.image == 'raspbian-bullseye-armhf'
         with:
           preset: cpack

@@ -42,11 +42,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: DoozyX/clang-format-lint-action@v0.14
-  cachix:
+  nix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - uses: cachix/install-nix-action@v18
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - run: nix build
+      - run: nix flake check
+  publish-cachix:
     needs: [ omnilint, clang-format, tests, coverage ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0
       - id: version
         uses: docker://lpenz/ghaction-version-gen:0.11.0
       - uses: cachix/install-nix-action@v18
@@ -57,8 +68,8 @@ jobs:
           skipPush: ${{ steps.version.outputs.version_commit == '' }}
           name: lpenz
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: nix-build
-      - run: nix-shell --run "echo OK"
+      - run: nix build
+      - run: nix flake check
   publish-packagecloud:
     needs: [ omnilint, clang-format, tests, coverage ]
     runs-on: ubuntu-latest

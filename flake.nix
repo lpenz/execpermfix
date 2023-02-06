@@ -1,13 +1,21 @@
 {
   description = "Fixes executable permissions";
-  inputs.nixpkgs.url = github:NixOS/nixpkgs/nixos-22.05;
-  outputs = { self, nixpkgs }: {
-    packages.x86_64-linux.default =
-      with import nixpkgs { system = "x86_64-linux"; };
-      stdenv.mkDerivation {
-        name = "execpermfix";
-        src = self;
-        buildInputs = [ pkgs.cmake ];
-      };
+  inputs = {
+    nixpkgs.url = github:NixOS/nixpkgs/nixos-22.05;
+    flake-utils.url = "github:numtide/flake-utils";
   };
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      rec {
+        packages.default = pkgs.stdenv.mkDerivation {
+          pname = "execpermfix";
+          version = "1.0.7";
+          src = self;
+          buildInputs = [ pkgs.cmake ];
+        };
+      }
+    );
 }

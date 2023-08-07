@@ -82,6 +82,9 @@ jobs:
           - image: debian-bookworm-amd64
             distro: debian
             version: bookworm
+          - image: debian-trixie-amd64
+            distro: debian
+            version: trixie
           - image: ubuntu-jammy-amd64
             distro: ubuntu
             version: jammy
@@ -99,6 +102,10 @@ jobs:
           preset: cpack
       - uses: docker://lpenz/ghaction-cmake:0.21.1
         if: matrix.variant.image == 'debian-bookworm-amd64'
+        with:
+          preset: cpack
+      - uses: docker://lpenz/ghaction-cmake:0.21.1
+        if: matrix.variant.image == 'debian-trixie-amd64'
         with:
           preset: cpack
       - uses: docker://lpenz/ghaction-cmake:0.21.1

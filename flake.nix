@@ -14,7 +14,7 @@
       rec {
         packages.default = pkgs.stdenv.mkDerivation {
           pname = "execpermfix";
-          version = "1.0.7";
+          version = "1.0.8";
           src = self;
           buildInputs = [ pkgs.cmake ];
         };

@@ -52,7 +52,7 @@ set(CPACK_DEBIAN_PACKAGE_SECTION utils)
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 execute_process(COMMAND git describe --tags
                 OUTPUT_VARIABLE GIT_DESCRIBE)
-string(REGEX REPLACE "^v([0-9.]+)(-g[0-9a-f]+)?\n$" "\\1"
+string(REGEX REPLACE "^v([0-9.-]+)(-g[0-9a-f]+)?\n$" "\\1"
   CPACK_PACKAGE_VERSION "${GIT_DESCRIBE}")
 set(CPACK_PACKAGE_FILE_NAME "execpermfix-${CPACK_PACKAGE_VERSION}")
 include(CPack)

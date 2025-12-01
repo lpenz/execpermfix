@@ -111,6 +111,7 @@ jobs:
           preset: cpack
       - run: |
           for f in *.deb; do ls -l "$f"; dpkg --info "$f"; done
+          sudo rm -rf _CPack_Packages
       - id: version
         uses: docker://lpenz/ghaction-version-gen:0.18.0
       - uses: docker://lpenz/ghaction-packagecloud:0.5

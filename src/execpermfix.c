@@ -28,7 +28,7 @@
 
 /****************************************************************************/
 
-static int filemapIsScript(const void *addr, size_t size) {
+static int filemapIsScript(const void* addr, size_t size) {
     const char scriptMagic[] = "#!";
 
     if (size >= (signed)(sizeof scriptMagic - 1) &&
@@ -39,19 +39,19 @@ static int filemapIsScript(const void *addr, size_t size) {
     return 0;
 }
 
-static int filemapIsElf(const char *filename, const void *addr, size_t size) {
+static int filemapIsElf(const char* filename, const void* addr, size_t size) {
     if (size < EI_NIDENT) return 0;
 
     if (memcmp(addr, ELFMAG, SELFMAG) != 0) {
         return 0;
     }
 
-    const uint8_t *elfclass = (uint8_t *)addr + EI_CLASS;
-    const uint8_t *elfdata = (uint8_t *)addr + EI_DATA;
+    const uint8_t* elfclass = (uint8_t*)addr + EI_CLASS;
+    const uint8_t* elfdata = (uint8_t*)addr + EI_DATA;
     int e_type_norm = 0;
 
     if (*elfclass == ELFCLASS32) {
-        const Elf32_Ehdr *hdr = addr;
+        const Elf32_Ehdr* hdr = addr;
         Elf32_Half e_type;
         assert(sizeof e_type == sizeof hdr->e_type);
         if (*elfdata == ELFDATA2LSB) {
@@ -64,7 +64,7 @@ static int filemapIsElf(const char *filename, const void *addr, size_t size) {
         }
         e_type_norm = e_type;
     } else if (*elfclass == ELFCLASS64) {
-        const Elf64_Ehdr *hdr = addr;
+        const Elf64_Ehdr* hdr = addr;
         Elf64_Half e_type;
         assert(sizeof e_type == sizeof hdr->e_type);
         if (*elfdata == ELFDATA2LSB) {
@@ -94,9 +94,9 @@ static int filemapIsElf(const char *filename, const void *addr, size_t size) {
     return -1;
 }
 
-int fileIsExec(const char *filename, int fd, const struct stat *st) {
+int fileIsExec(const char* filename, int fd, const struct stat* st) {
     size_t size = st->st_size;
-    void *addr = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
+    void* addr = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
 
     if (addr == MAP_FAILED) {
         fprintf(stderr, "%s: mmap error %s\n", filename, strerror(errno));
@@ -118,10 +118,10 @@ int fileIsExec(const char *filename, int fd, const struct stat *st) {
 
 /****************************************************************************/
 
-int execpermfix(const char *name, int noop, bool verbose) {
+int execpermfix(const char* name, int noop, bool verbose) {
     int fd = 0;
     struct stat st;
-    char *fullname;
+    char* fullname;
     int exec;
     mode_t mode;
 

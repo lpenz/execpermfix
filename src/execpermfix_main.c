@@ -29,7 +29,7 @@ const char USAGE[] =
 
 /****************************************************************************/
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     int rv = 0;
     int i;
     int opt;

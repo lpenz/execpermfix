@@ -5,16 +5,16 @@ jobs:
   omnilint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.0
       - uses: docker://lpenz/omnilint:0.5.2
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.0
       - uses: docker://lpenz/ghaction-cmake:0.23.0
         with:
           preset: coverage
-      - uses: coverallsapp/github-action@v2.3.6
+      - uses: coverallsapp/github-action@v2.3.7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: lcov.info
@@ -33,20 +33,20 @@ jobs:
           - valgrind
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.0
       - uses: docker://lpenz/ghaction-cmake:0.23.0
         with:
           preset: ${{ matrix.preset }}
   clang-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: DoozyX/clang-format-lint-action@v0.18.2
+      - uses: actions/checkout@v6.0.0
+      - uses: DoozyX/clang-format-lint-action@v0.20
   nix:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: cachix/install-nix-action@v30
+      - uses: actions/checkout@v6.0.0
+      - uses: cachix/install-nix-action@v31.8.4
         with:
           nix_path: nixpkgs=channel:nixos-unstable
       - run: nix build
@@ -55,15 +55,15 @@ jobs:
     needs: [omnilint, clang-format, tests, coverage]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
       - id: version
-        uses: docker://lpenz/ghaction-version-gen:0.14.1
-      - uses: cachix/install-nix-action@v30
+        uses: docker://lpenz/ghaction-version-gen:0.18.0
+      - uses: cachix/install-nix-action@v31.8.4
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-      - uses: cachix/cachix-action@v15
+      - uses: cachix/cachix-action@v16
         with:
           skipPush: ${{ steps.version.outputs.version_commit == '' }}
           name: lpenz
@@ -89,10 +89,10 @@ jobs:
             distro: raspbian
             version: bookworm
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
-      - uses: docker/setup-qemu-action@v3.6.0
+      - uses: docker/setup-qemu-action@v3.7.0
       - uses: docker://lpenz/ghaction-cmake:0.23.0
         if: matrix.variant.image == 'debian-bookworm-amd64'
         with:
@@ -112,8 +112,8 @@ jobs:
       - run: |
           for f in *.deb; do ls -l "$f"; dpkg --info "$f"; done
       - id: version
-        uses: docker://lpenz/ghaction-version-gen:0.14.1
-      - uses: docker://lpenz/ghaction-packagecloud:0.4
+        uses: docker://lpenz/ghaction-version-gen:0.18.0
+      - uses: docker://lpenz/ghaction-packagecloud:0.5
         if: steps.version.outputs.version_commit != ''
         with:
           repository: ${{ matrix.variant.distro }}/${{ matrix.variant.distro }}/${{

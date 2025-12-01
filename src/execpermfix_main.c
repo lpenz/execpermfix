@@ -14,7 +14,7 @@
 #include "execpermfix.h"
 
 #define PROGRAM_NAME "execpermfix"
-#define PROGRAM_VERSION "1.0.10"
+#define PROGRAM_VERSION "1.0.11"
 
 /****************************************************************************/
 

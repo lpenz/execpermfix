@@ -1,6 +1,6 @@
 ---
 name: CI
-on: [ workflow_dispatch, push, pull_request ]
+on: [workflow_dispatch, push, pull_request]  # yamllint disable-line rule:truthy
 jobs:
   omnilint:
     runs-on: ubuntu-latest
@@ -20,17 +20,17 @@ jobs:
           path-to-lcov: lcov.info
   tests:
     strategy:
-        matrix:
-          preset:
-            - cppcheck
-            - clang-tidy
-            - install
-            - clang-sanitize-address
-            - clang-sanitize-memory
-            - clang-sanitize-undefined
-            - clang-sanitize-dataflow
-            - clang-sanitize-safe-stack
-            - valgrind
+      matrix:
+        preset:
+          - cppcheck
+          - clang-tidy
+          - install
+          - clang-sanitize-address
+          - clang-sanitize-memory
+          - clang-sanitize-undefined
+          - clang-sanitize-dataflow
+          - clang-sanitize-safe-stack
+          - valgrind
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
@@ -52,7 +52,7 @@ jobs:
       - run: nix build
       - run: nix flake check
   publish-cachix:
-    needs: [ omnilint, clang-format, tests, coverage ]
+    needs: [omnilint, clang-format, tests, coverage]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
@@ -67,11 +67,11 @@ jobs:
         with:
           skipPush: ${{ steps.version.outputs.version_commit == '' }}
           name: lpenz
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - run: nix build
       - run: nix flake check
   publish-packagecloud:
-    needs: [ omnilint, clang-format, tests, coverage ]
+    needs: [omnilint, clang-format, tests, coverage]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -116,6 +116,7 @@ jobs:
       - uses: docker://lpenz/ghaction-packagecloud:0.4
         if: steps.version.outputs.version_commit != ''
         with:
-          repository: ${{ matrix.variant.distro }}/${{ matrix.variant.distro }}/${{ matrix.variant.version }}
+          repository: ${{ matrix.variant.distro }}/${{ matrix.variant.distro }}/${{
+            matrix.variant.version }}
         env:
           PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}

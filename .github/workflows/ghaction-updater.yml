@@ -1,5 +1,5 @@
 ---
-on: [ workflow_dispatch ]
+on: [workflow_dispatch]  # yamllint disable-line rule:truthy
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,4 +10,3 @@ jobs:
       - uses: saadmk11/github-actions-version-updater@v0.8.1
         with:
           token: ${{ secrets.GHACTION_UPDATER_TOKEN }}
-
